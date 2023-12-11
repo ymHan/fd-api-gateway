@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
     const token: string = bearer[1];
     const { status, userId }: ValidateResponse = await this.service.validate(token);
 
-    req.user = userId;
+    console.log(req);//req.user = userId;
 
     if (status !== HttpStatus.OK) {
       throw new UnauthorizedException();
