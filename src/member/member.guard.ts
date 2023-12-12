@@ -8,8 +8,8 @@ export class MemberGuard implements CanActivate {
   @Inject(MemberService)
   public readonly service: MemberService;
 
-  public async canActivate(context: ExecutionContext): Promise<boolean> | never {
-    const req: Request = context.switchToHttp().getRequest();
+  public async canActivate(ctx: ExecutionContext): Promise<boolean> | never {
+    const req: Request = ctx.switchToHttp().getRequest();
     const authorization: string = req.headers['authorization'];
 
     if (!authorization) {
@@ -23,9 +23,12 @@ export class MemberGuard implements CanActivate {
     }
 
     const token: string = bearer[1];
+
     const { status, userId }: ValidateResponse = await this.service.validate(token);
 
-    console.log(req);//req.user = userId;
+    req['user'] = userId;
+
+    console.log(req);
 
     if (status !== HttpStatus.OK) {
       throw new UnauthorizedException();
