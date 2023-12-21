@@ -242,6 +242,10 @@ export interface UpdateSectorResponse {
 export interface UpdateSectorRequest {
   /** 구역코드번호 */
   id: string;
+  /** 고객코드번호 */
+  customerId: string;
+  /** 장소코드번호 */
+  venueId: string;
   /** 구역명 */
   name: string;
   /** 구역설명 */
