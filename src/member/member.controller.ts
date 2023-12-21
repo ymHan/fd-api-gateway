@@ -1,7 +1,7 @@
-import { Body, Controller, Inject, OnModuleInit, Post, Put } from '@nestjs/common';
+import { Body, Controller, Inject, OnModuleInit, Post } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
-import { MemberServiceClient, SignInResponse, SignUpResponse, SignInRequest, SignUpRequest, MEMBER_SERVICE_NAME } from './member.pb';
+import { MemberServiceClient, SignInResponse, SignUpResponse, SignInRequest, SignUpRequest, MEMBER_SERVICE_NAME } from '../proto/member.pb';
 
 @Controller('member')
 export class MemberController implements OnModuleInit {
@@ -19,7 +19,7 @@ export class MemberController implements OnModuleInit {
     return this.svc.signUp(body);
   }
 
-  @Put('signin')
+  @Post('signin')
   public signIn(@Body() body: SignInRequest): Observable<SignInResponse> {
     return this.svc.signIn(body);
   }

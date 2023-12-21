@@ -4,6 +4,16 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "member";
 
+export interface UpdateRoleRequest {
+  userId: number;
+  rolesId: number;
+}
+
+export interface UpdateRoleResponse {
+  status: number;
+  error: string[];
+}
+
 export interface SignUpRequest {
   name: string;
   email: string;
@@ -17,7 +27,7 @@ export interface SignUpResponse {
 }
 
 export interface UpdateRequest {
-  userId: number;
+  id: number;
 }
 
 export interface UpdateResponse {
@@ -67,6 +77,8 @@ export interface MemberServiceClient {
   signIn(request: SignInRequest): Observable<SignInResponse>;
 
   validate(request: ValidateRequest): Observable<ValidateResponse>;
+
+  updateRole(request: UpdateRoleRequest): Observable<UpdateRoleResponse>;
 }
 
 export interface MemberServiceController {
@@ -79,11 +91,15 @@ export interface MemberServiceController {
   signIn(request: SignInRequest): Promise<SignInResponse> | Observable<SignInResponse> | SignInResponse;
 
   validate(request: ValidateRequest): Promise<ValidateResponse> | Observable<ValidateResponse> | ValidateResponse;
+
+  updateRole(
+    request: UpdateRoleRequest,
+  ): Promise<UpdateRoleResponse> | Observable<UpdateRoleResponse> | UpdateRoleResponse;
 }
 
 export function MemberServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["signUp", "update", "delete", "signIn", "validate"];
+    const grpcMethods: string[] = ["signUp", "update", "delete", "signIn", "validate", "updateRole"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("MemberService", method)(constructor.prototype[method], method, descriptor);

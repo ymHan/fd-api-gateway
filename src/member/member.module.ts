@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MemberController } from './member.controller';
-import { MEMBER_SERVICE_NAME, MEMBER_PACKAGE_NAME } from './member.pb';
+import { MEMBER_SERVICE_NAME, MEMBER_PACKAGE_NAME } from '../proto/member.pb';
 import { MemberService } from './member.service';
 
 @Global()
