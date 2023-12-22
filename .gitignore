@@ -36,4 +36,5 @@ lerna-debug.log*
 
 # protobuf
 *.pb.*
+/src/proto
 
