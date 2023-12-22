@@ -56,7 +56,7 @@ import { SectorService } from './backoffice.sector.service';
           package: BACKOFFICE_PACKAGE_NAME,
           protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
         },
-      }
+      },
     ]),
   ],
   controllers: [CustomerController, VenueController, SectorController],
