@@ -283,7 +283,7 @@ export interface GetSectorResponse {
 }
 
 export interface GetSectorResponse_Result {
-  sector: Sector | undefined;
+  sector: Sector2 | undefined;
 }
 
 export interface GetSectorRequest {
@@ -312,6 +312,23 @@ export interface Sector {
   name: string;
   /** 구역설명 */
   description: string;
+}
+
+export interface Sector2 {
+  /** 구역코드번호 */
+  id: string;
+  /** 고객코드번호 */
+  customerId: string;
+  /** 장소코드번호 */
+  venueId: string;
+  /** 구역명 */
+  name: string;
+  /** 구역설명 */
+  description: string;
+  /** 종목코드번호 */
+  sportsId: string;
+  /** 구장코드번호 */
+  fId: string;
 }
 
 export interface CreateSectorRequest {
