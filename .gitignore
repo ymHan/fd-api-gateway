@@ -35,7 +35,5 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # protobuf
-*.pb.ts
-*.pb.js
 /src/proto
 
