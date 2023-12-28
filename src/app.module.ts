@@ -1,14 +1,29 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 import { MemberModule } from './member/member.module';
 import { BackofficeModule } from './backoffice/backoffice.module';
 
-import { FditionModule } from './4dition/4dition.module';
+import { FDtionModule } from '@root/fdtion/fdtion.module';
+import { RouterModule } from '@nestjs/core';
 @Module({
-  imports: [MemberModule, BackofficeModule, FditionModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    MemberModule,
+    BackofficeModule,
+    FDtionModule,
+    RouterModule.register([
+      {
+        path: 'api/v1',
+        module: MemberModule,
+      },
+      {
+        path: 'api/v1',
+        module: BackofficeModule,
+      },
+      {
+        path: 'api/v1',
+        module: FDtionModule,
+      },
+    ]),
+  ],
 })
 export class AppModule {}

@@ -12,9 +12,9 @@ import {
   ListVenueResponse,
   UpdateVenueRequest,
   UpdateVenueResponse,
-} from '../proto/backoffice.pb';
+} from '@proto/backoffice.pb';
 
-@Controller({ path: 'bo', version: '1' })
+@Controller()
 export class VenueController implements OnModuleInit {
   private svc: BO_Venue_ServiceClient;
 

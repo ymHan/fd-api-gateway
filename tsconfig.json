@@ -17,6 +17,12 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "typeRoots": ["./src/@types", "./node_modules/@types"]
+    "typeRoots": ["./src/@types", "./node_modules/@types"],
+    "paths": {
+      "@root/*": ["./src/*"],
+      "@proto/*": ["./src/proto/*"],
+      "@config/*": ["./src/config/*"],
+      "@tools/*": ["./src/tools/*"],
+    }
   }
 }

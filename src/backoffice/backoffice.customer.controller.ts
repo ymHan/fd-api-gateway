@@ -12,9 +12,9 @@ import {
   ListCustomerResponse,
   UpdateCustomerRequest,
   UpdateCustomerResponse,
-} from '../proto/backoffice.pb';
+} from '@proto/backoffice.pb';
 
-@Controller({ path: 'bo', version: '1' })
+@Controller()
 export class CustomerController implements OnModuleInit {
   private svc: BO_Customer_ServiceClient;
 

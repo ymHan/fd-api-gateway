@@ -12,9 +12,9 @@ import {
   ListSectorResponse,
   UpdateSectorRequest,
   UpdateSectorResponse,
-} from '../proto/backoffice.pb';
+} from '@proto/backoffice.pb';
 
-@Controller({ path: 'bo', version: '1' })
+@Controller()
 export class SectorController implements OnModuleInit {
   private svc: BO_Sector_ServiceClient;
 

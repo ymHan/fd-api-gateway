@@ -1,10 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { FDITION_SERVICE_NAME, FDITION_PACKAGE_NAME } from '../proto/fdition.pb';
+import { FDITION_SERVICE_NAME, FDITION_PACKAGE_NAME } from '@proto/fdition.pb';
 
-import { InitController } from './4dition.init.controller';
-
-import { InitService } from './4dition.init.service';
+import { FDtionController } from './fdtion.controller';
+import { FDtionService } from './fdtion.service';
 
 @Global()
 @Module({
@@ -21,8 +20,8 @@ import { InitService } from './4dition.init.service';
       },
     ]),
   ],
-  controllers: [InitController],
-  providers: [InitService],
-  exports: [InitService],
+  controllers: [FDtionController],
+  providers: [FDtionService],
+  exports: [FDtionService],
 })
-export class FditionModule {}
+export class FDtionModule {}

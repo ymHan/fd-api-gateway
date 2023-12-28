@@ -6,7 +6,7 @@ import {
   B_O__MEMBER__SERVICE_NAME,
   B_O__SECTOR__SERVICE_NAME,
   BACKOFFICE_PACKAGE_NAME,
-} from '../proto/backoffice.pb';
+} from '@proto/backoffice.pb';
 
 import { CustomerController } from './backoffice.customer.controller';
 import { VenueController } from './backoffice.venue.controller';
@@ -60,7 +60,7 @@ import { SectorService } from './backoffice.sector.service';
     ]),
   ],
   controllers: [CustomerController, VenueController, SectorController],
-  providers: [CustomerService, VenueService, VenueService],
-  exports: [CustomerService, VenueService, VenueService],
+  providers: [CustomerService, VenueService, VenueService, SectorService],
+  exports: [CustomerService, VenueService, VenueService, SectorService],
 })
 export class BackofficeModule {}
