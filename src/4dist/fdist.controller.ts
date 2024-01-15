@@ -12,8 +12,8 @@ import {
 
 import { Util } from '@tools/api.util';
 import { ApiTags } from '@nestjs/swagger';
-@ApiTags('FDition - Node')
-@Controller({ path: 'fdition' })
+@ApiTags('FDist - Member')
+@Controller({ path: 'user' })
 export class FDtionController implements OnModuleInit {
   private svc: FditionServiceClient;
 

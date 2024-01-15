@@ -23,6 +23,7 @@
       "@proto/*": ["./src/proto/*"],
       "@config/*": ["./src/config/*"],
       "@tools/*": ["./src/tools/*"],
+      "@models/*": ["./src/models/enum/*"],
     }
   }
 }

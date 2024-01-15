@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, HttpStatus, UnauthorizedException, Inject } from '@nestjs/common';
 import { Request } from 'express';
-import { ValidateResponse } from '../proto/member.pb';
+import { ValidateResponse } from '@proto/member.pb';
 import { MemberService } from './member.service';
 
 @Injectable()

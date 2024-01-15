@@ -13,15 +13,17 @@ import {
   UpdateSectorRequest,
   UpdateSectorResponse,
 } from '@proto/backoffice.pb';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller()
+@ApiTags('BackOffice - Sector')
+@Controller({ path: 'bo' })
 export class SectorController implements OnModuleInit {
   private svc: BO_Sector_ServiceClient;
 
   @Inject(B_O__SECTOR__SERVICE_NAME)
   private readonly client: ClientGrpc;
 
-  public onModuleInit() {
+  onModuleInit() {
     this.svc = this.client.getService<BO_Sector_ServiceClient>(B_O__SECTOR__SERVICE_NAME);
   }
 

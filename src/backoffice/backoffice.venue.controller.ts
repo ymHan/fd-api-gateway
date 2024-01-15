@@ -13,15 +13,17 @@ import {
   UpdateVenueRequest,
   UpdateVenueResponse,
 } from '@proto/backoffice.pb';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller()
+@ApiTags('BackOffice - Venue')
+@Controller({ path: 'bo' })
 export class VenueController implements OnModuleInit {
   private svc: BO_Venue_ServiceClient;
 
   @Inject(B_O__VENUE__SERVICE_NAME)
   private readonly client: ClientGrpc;
 
-  public onModuleInit() {
+  onModuleInit() {
     this.svc = this.client.getService<BO_Venue_ServiceClient>(B_O__VENUE__SERVICE_NAME);
   }
 

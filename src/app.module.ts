@@ -4,7 +4,10 @@ import { MemberModule } from './member/member.module';
 import { BackofficeModule } from './backoffice/backoffice.module';
 
 import { FDtionModule } from '@root/fdtion/fdtion.module';
+import { FDistModule } from '@root/4dist/fdist.module';
+
 import { RouterModule } from '@nestjs/core';
+
 @Module({
   imports: [
     MemberModule,
@@ -22,6 +25,10 @@ import { RouterModule } from '@nestjs/core';
       {
         path: 'api/v1',
         module: FDtionModule,
+      },
+      {
+        path: 'api/v1',
+        module: FDistModule,
       },
     ]),
   ],

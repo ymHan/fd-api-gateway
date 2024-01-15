@@ -14,7 +14,10 @@ import {
   UpdateCustomerResponse,
 } from '@proto/backoffice.pb';
 
-@Controller()
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('BackOffice - Customer')
+@Controller({ path: 'bo' })
 export class CustomerController implements OnModuleInit {
   private svc: BO_Customer_ServiceClient;
 
