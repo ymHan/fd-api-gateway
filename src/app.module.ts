@@ -15,19 +15,19 @@ import { RouterModule } from '@nestjs/core';
     FDtionModule,
     RouterModule.register([
       {
-        path: 'api/v1',
+        path: 'v1',
         module: MemberModule,
       },
       {
-        path: 'api/v1',
+        path: 'v1',
         module: BackofficeModule,
       },
       {
-        path: 'api/v1',
+        path: 'v1',
         module: FDtionModule,
       },
       {
-        path: 'api/v1',
+        path: 'v1',
         module: FDistModule,
       },
     ]),
