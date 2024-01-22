@@ -24,11 +24,11 @@ export class MemberGuard implements CanActivate {
 
     const token: string = bearer[1];
 
-    const { status, userId }: ValidateResponse = await this.service.validate(token);
+    const { result, status, message, data }: ValidateResponse = await this.service.validate(token);
+    console.log(data);
+    //req['user'] = data.email;
 
-    req['user'] = userId;
-
-    console.log(req);
+    //console.log(req);
 
     if (status !== HttpStatus.OK) {
       throw new UnauthorizedException();

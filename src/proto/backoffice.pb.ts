@@ -364,6 +364,99 @@ export interface CreateMemberResponse {
   error: string[];
 }
 
+export interface ItemCategory {
+  /** 카테고리명 */
+  name: string;
+  /** 카테고리 깊이 1: 최상위 */
+  depth: number;
+  /** 카테고리설명 */
+  description: string;
+}
+
+export interface CreateCategoryRequest {
+  /** 카테고리명 */
+  name: string;
+  /** 카테고리 깊이 1: 최상위 */
+  depth: number;
+  /** 카테고리설명 */
+  description: string;
+}
+
+export interface CreateCategoryResponse {
+  status: number;
+  error: string[];
+  result: CreateCategoryResponse_Result | undefined;
+}
+
+export interface CreateCategoryResponse_Result {
+  id: string;
+}
+
+export interface GetCategoryRequest {
+  /** 카테고리코드번호 */
+  id: string;
+}
+
+export interface GetCategoryResponse {
+  status: number;
+  result: GetCategoryResponse_Result | undefined;
+  error: string[];
+}
+
+export interface GetCategoryResponse_Result {
+  category: ItemCategory | undefined;
+}
+
+export interface ListCategoryRequest {
+  /** 페이지 번호 */
+  page: number;
+  /** 페이지 사이즈 */
+  pagesize: number;
+  /** 정렬 - field 명 */
+  sort: string;
+  /** 정렬 방식 asc / desc */
+  order: string;
+}
+
+export interface ListCategoryResponse {
+  status: number;
+  totalCount: number;
+  page: number;
+  lastPage: number;
+  result: ListCategoryResponse_Result | undefined;
+  error: string[];
+}
+
+export interface ListCategoryResponse_Result {
+  categories: ItemCategory[];
+}
+
+export interface UpdateCategoryRequest {
+  /** 카테고리코드번호 */
+  id: string;
+  /** 카테고리명 */
+  name: string;
+  /** 카테고리 깊이 1: 최상위 */
+  depth: number;
+  /** 카테고리설명 */
+  description: string;
+}
+
+export interface UpdateCategoryResponse {
+  status: number;
+  error: string[];
+}
+
+export interface DeleteCategoryRequest {
+  /** 카테고리코드번호 */
+  id: string;
+}
+
+export interface DeleteCategoryResponse {
+  status: number;
+  error: string[];
+}
+
 export const BACKOFFICE_PACKAGE_NAME = "backoffice";
 
 /**
@@ -587,3 +680,54 @@ export function BO_Member_ServiceControllerMethods() {
 }
 
 export const B_O__MEMBER__SERVICE_NAME = "BO_Member_Service";
+
+export interface CategoryClient {
+  createCategory(request: CreateCategoryRequest): Observable<CreateCategoryResponse>;
+
+  getCategory(request: GetCategoryRequest): Observable<GetCategoryResponse>;
+
+  listCategory(request: ListCategoryRequest): Observable<ListCategoryResponse>;
+
+  updateCategory(request: UpdateCategoryRequest): Observable<UpdateCategoryResponse>;
+
+  deleteCategory(request: DeleteCategoryRequest): Observable<DeleteCategoryResponse>;
+}
+
+export interface CategoryController {
+  createCategory(
+    request: CreateCategoryRequest,
+  ): Promise<CreateCategoryResponse> | Observable<CreateCategoryResponse> | CreateCategoryResponse;
+
+  getCategory(
+    request: GetCategoryRequest,
+  ): Promise<GetCategoryResponse> | Observable<GetCategoryResponse> | GetCategoryResponse;
+
+  listCategory(
+    request: ListCategoryRequest,
+  ): Promise<ListCategoryResponse> | Observable<ListCategoryResponse> | ListCategoryResponse;
+
+  updateCategory(
+    request: UpdateCategoryRequest,
+  ): Promise<UpdateCategoryResponse> | Observable<UpdateCategoryResponse> | UpdateCategoryResponse;
+
+  deleteCategory(
+    request: DeleteCategoryRequest,
+  ): Promise<DeleteCategoryResponse> | Observable<DeleteCategoryResponse> | DeleteCategoryResponse;
+}
+
+export function CategoryControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["createCategory", "getCategory", "listCategory", "updateCategory", "deleteCategory"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("Category", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("Category", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const CATEGORY_SERVICE_NAME = "Category";

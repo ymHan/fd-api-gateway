@@ -1,17 +1,77 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
+import { Timestamp } from "./google/protobuf/timestamp.pb";
 
 export const protobufPackage = "member";
 
+export interface LeaveMemberRequest {
+  email: string;
+}
+
+export interface LeaveMemberResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: string[];
+}
+
+export interface User {
+  id: number;
+  email: string;
+  name: string;
+  role: string;
+  state: string;
+  isVerifiedEmail: boolean;
+  createdAt: Timestamp | undefined;
+  updatedAt: Timestamp | undefined;
+  deletedAt: Timestamp | undefined;
+}
+
+export interface GetUserResult {
+  id?: number | undefined;
+  email?: string | undefined;
+  name?: string | undefined;
+  role?: string | undefined;
+  state?: string | undefined;
+  isVerifiedEmail?: boolean | undefined;
+  createdAt?: string | undefined;
+  updatedAt?: string | undefined;
+}
+
+export interface GetUserResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: GetUserResult[];
+}
+
+export interface GetUserRequest {
+  email: string;
+}
+
+export interface UpdateStateRequest {
+  status: string;
+  message: string;
+}
+
+export interface UpdateStateResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: User[];
+}
+
 export interface UpdateRoleRequest {
-  userId: number;
-  rolesId: number;
+  email: string;
+  role: string;
 }
 
 export interface UpdateRoleResponse {
+  result: string;
   status: number;
-  error: string[];
+  message: string;
+  data: User[];
 }
 
 export interface SignUpRequest {
@@ -22,9 +82,20 @@ export interface SignUpRequest {
 }
 
 export interface SignUpResponse {
+  result: string;
   status: number;
   message: string;
-  error: string[];
+  data: SignUpResponse_DATA[];
+}
+
+export interface SignUpResponse_DATA {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  state: string;
+  isVerifiedEmail: boolean;
+  createdAt: string;
 }
 
 export interface UpdateRequest {
@@ -32,8 +103,10 @@ export interface UpdateRequest {
 }
 
 export interface UpdateResponse {
+  result: string;
   status: number;
-  error: string[];
+  message: string;
+  data: User[];
 }
 
 export interface DeleteRequest {
@@ -41,8 +114,10 @@ export interface DeleteRequest {
 }
 
 export interface DeleteResponse {
+  result: string;
   status: number;
-  error: string[];
+  message: string;
+  data: string[];
 }
 
 export interface SignInRequest {
@@ -50,22 +125,33 @@ export interface SignInRequest {
   password: string;
 }
 
+export interface SignInResult {
+  token?: string | undefined;
+  error?: string | undefined;
+}
+
 export interface SignInResponse {
+  result: string;
   status: number;
   message: string;
-  token: string;
-  error: string[];
+  data: SignInResult[];
 }
 
 export interface ValidateRequest {
   token: string;
 }
 
+export interface ValidateResult {
+  id?: number | undefined;
+  email?: string | undefined;
+  error?: string | undefined;
+}
+
 export interface ValidateResponse {
+  result: string;
   status: number;
   message: string;
-  userId: number;
-  error: string[];
+  data: ValidateResult[];
 }
 
 export const MEMBER_PACKAGE_NAME = "member";
@@ -81,7 +167,13 @@ export interface MemberServiceClient {
 
   validate(request: ValidateRequest): Observable<ValidateResponse>;
 
+  getUser(request: GetUserRequest): Observable<GetUserResponse>;
+
   updateRole(request: UpdateRoleRequest): Observable<UpdateRoleResponse>;
+
+  updateState(request: UpdateStateRequest): Observable<UpdateStateResponse>;
+
+  leaveMember(request: LeaveMemberRequest): Observable<LeaveMemberResponse>;
 }
 
 export interface MemberServiceController {
@@ -95,14 +187,34 @@ export interface MemberServiceController {
 
   validate(request: ValidateRequest): Promise<ValidateResponse> | Observable<ValidateResponse> | ValidateResponse;
 
+  getUser(request: GetUserRequest): Promise<GetUserResponse> | Observable<GetUserResponse> | GetUserResponse;
+
   updateRole(
     request: UpdateRoleRequest,
   ): Promise<UpdateRoleResponse> | Observable<UpdateRoleResponse> | UpdateRoleResponse;
+
+  updateState(
+    request: UpdateStateRequest,
+  ): Promise<UpdateStateResponse> | Observable<UpdateStateResponse> | UpdateStateResponse;
+
+  leaveMember(
+    request: LeaveMemberRequest,
+  ): Promise<LeaveMemberResponse> | Observable<LeaveMemberResponse> | LeaveMemberResponse;
 }
 
 export function MemberServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["signUp", "update", "delete", "signIn", "validate", "updateRole"];
+    const grpcMethods: string[] = [
+      "signUp",
+      "update",
+      "delete",
+      "signIn",
+      "validate",
+      "getUser",
+      "updateRole",
+      "updateState",
+      "leaveMember",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("MemberService", method)(constructor.prototype[method], method, descriptor);
