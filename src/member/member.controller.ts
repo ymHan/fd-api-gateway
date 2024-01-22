@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, OnModuleInit, Post, UseGuards, Get, Patch } from '@nestjs/common';
+import { Body, Controller, Inject, OnModuleInit, Post, UseGuards, Get, Patch, Param } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import {
@@ -9,7 +9,7 @@ import {
   SignUpRequest,
   MEMBER_SERVICE_NAME,
   ValidateRequest,
-  ValidateResponse,
+  ValidateResponse, GetUserRequest, GetUserResponse,
 } from '@proto/member.pb';
 import { ApiTags, ApiParam, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiCreatedResponse } from '@nestjs/swagger';
 import { AccountRoles } from '@root/models/enum';
@@ -111,9 +111,17 @@ export class MemberController implements OnModuleInit {
 
   @UseGuards(MemberGuard)
   @ApiOperation({ summary: '내 정보 조회' })
-  @Get(':id')
-  public getUser(): string {
-    return 'ok';
+  @ApiBearerAuth()
+  @Get('/:id')
+  @ApiParam({
+    name: 'id',
+    description: '사용자 ID',
+    required: true,
+    type: 'number',
+  })
+  public getUser(@Param() params: GetUserRequest): Observable<GetUserResponse> {
+    console.log(params);
+    return this.svc.getUser(params);
   }
 
   @UseGuards(MemberGuard)
