@@ -5,6 +5,22 @@ import { Timestamp } from "./google/protobuf/timestamp.pb";
 
 export const protobufPackage = "member";
 
+export interface VerifyEmailRequest {
+  token: string;
+}
+
+export interface VerifyEmailResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: VerifyEmailResponse_DATA[];
+}
+
+export interface VerifyEmailResponse_DATA {
+  result?: boolean | undefined;
+  error?: string | undefined;
+}
+
 export interface LeaveMemberRequest {
   email: string;
 }
@@ -37,6 +53,7 @@ export interface GetUserResult {
   isVerifiedEmail?: boolean | undefined;
   createdAt?: string | undefined;
   updatedAt?: string | undefined;
+  error?: string | undefined;
 }
 
 export interface GetUserResponse {
@@ -47,7 +64,7 @@ export interface GetUserResponse {
 }
 
 export interface GetUserRequest {
-  email: string;
+  id: number;
 }
 
 export interface UpdateStateRequest {
@@ -174,6 +191,8 @@ export interface MemberServiceClient {
   updateState(request: UpdateStateRequest): Observable<UpdateStateResponse>;
 
   leaveMember(request: LeaveMemberRequest): Observable<LeaveMemberResponse>;
+
+  verifyEmail(request: { token: string }): Observable<VerifyEmailResponse>;
 }
 
 export interface MemberServiceController {
@@ -200,6 +219,10 @@ export interface MemberServiceController {
   leaveMember(
     request: LeaveMemberRequest,
   ): Promise<LeaveMemberResponse> | Observable<LeaveMemberResponse> | LeaveMemberResponse;
+
+  verifyEmail(
+    request: VerifyEmailRequest,
+  ): Promise<VerifyEmailResponse> | Observable<VerifyEmailResponse> | VerifyEmailResponse;
 }
 
 export function MemberServiceControllerMethods() {
@@ -214,6 +237,7 @@ export function MemberServiceControllerMethods() {
       "updateRole",
       "updateState",
       "leaveMember",
+      "verifyEmail",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

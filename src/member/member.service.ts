@@ -11,7 +11,6 @@ export class MemberService {
   private readonly client: ClientGrpc;
 
   public onModuleInit(): void {
-    // 1
     this.svc = this.client.getService<MemberServiceClient>(MEMBER_SERVICE_NAME);
   }
 

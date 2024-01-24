@@ -1,6 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, HttpStatus, UnauthorizedException, Inject } from '@nestjs/common';
-import { Request } from 'express';
-import { ValidateResponse } from '@proto/member.pb';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Inject, ForbiddenException, } from '@nestjs/common';
 import { MemberService } from './member.service';
 
 @Injectable()
@@ -8,32 +6,22 @@ export class MemberGuard implements CanActivate {
   @Inject(MemberService)
   public readonly service: MemberService;
 
-  public async canActivate(ctx: ExecutionContext): Promise<boolean> | never {
-    const req: Request = ctx.switchToHttp().getRequest();
-    const authorization: string = req.headers['authorization'];
+  public async canActivate(ctx: ExecutionContext): Promise<boolean> {
+    try {
+      const request = ctx.switchToHttp().getRequest();
+      const { authorization }: any = request.headers;
 
-    if (!authorization) {
-      throw new UnauthorizedException();
+      if (!authorization || authorization.trim() === '') {
+        throw new UnauthorizedException('Please provide token');
+      }
+
+      const token: string = authorization.replace(/bearer/gim, '').trim();
+      const response = await this.service.validate(token);
+      request.decodeData = response.data[0];
+      return true;
+    } catch (error) {
+      console.log('auth error - ', error.message);
+      throw new ForbiddenException(error.message || 'session expired! Please sign In.');
     }
-
-    const bearer: string[] = authorization.split(' ');
-
-    if (!bearer || bearer.length < 2) {
-      throw new UnauthorizedException();
-    }
-
-    const token: string = bearer[1];
-
-    const { result, status, message, data }: ValidateResponse = await this.service.validate(token);
-    console.log(data);
-    //req['user'] = data.email;
-
-    //console.log(req);
-
-    if (status !== HttpStatus.OK) {
-      throw new UnauthorizedException();
-    }
-
-    return true;
   }
 }
