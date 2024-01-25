@@ -7,12 +7,14 @@ import { FDtionModule } from '@root/fdtion/fdtion.module';
 import { FDistModule } from '@root/4dist/fdist.module';
 
 import { RouterModule } from '@nestjs/core';
+import { EventsModule } from '@root/websocket/events.module';
 
 @Module({
   imports: [
     MemberModule,
     BackofficeModule,
     FDtionModule,
+    EventsModule,
     RouterModule.register([
       {
         path: 'v1',
