@@ -15,6 +15,7 @@ export class EventsGateway {
 
   @SubscribeMessage('record')
   onEvent(client: any, data: any): Observable<WsResponse<number>> {
+    console.log(data);
     const event = 'record';
     const response = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     return from(response).pipe(map((data) => ({ event, data })));
