@@ -15,7 +15,6 @@ export class MemberService {
   }
 
   public validate(token: string): Promise<ValidateResponse> {
-    // 2
     return firstValueFrom(this.svc.validate({ token }));
   }
 }

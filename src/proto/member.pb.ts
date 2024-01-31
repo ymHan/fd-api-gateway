@@ -5,6 +5,38 @@ import { Timestamp } from "./google/protobuf/timestamp.pb";
 
 export const protobufPackage = "member";
 
+export interface CheckNicknameDuplicationRequest {
+  nickname: string;
+}
+
+export interface CheckNicknameDuplicationResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: CheckNicknameDuplicationResponse_DATA[];
+}
+
+export interface CheckNicknameDuplicationResponse_DATA {
+  result?: boolean | undefined;
+  error?: string | undefined;
+}
+
+export interface CheckEmailDuplicationRequest {
+  email: string;
+}
+
+export interface CheckEmailDuplicationResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: CheckEmailDuplicationResponse_DATA[];
+}
+
+export interface CheckEmailDuplicationResponse_DATA {
+  result?: boolean | undefined;
+  error?: string | undefined;
+}
+
 export interface VerifyEmailRequest {
   token: string;
 }
@@ -48,7 +80,8 @@ export interface GetUserResult {
   id?: number | undefined;
   email?: string | undefined;
   name?: string | undefined;
-  role?: string | undefined;
+  nickname?: string | undefined;
+  usertype?: string | undefined;
   state?: string | undefined;
   isVerifiedEmail?: boolean | undefined;
   createdAt?: string | undefined;
@@ -93,9 +126,11 @@ export interface UpdateRoleResponse {
 
 export interface SignUpRequest {
   name: string;
+  nickname: string;
   email: string;
   password: string;
-  role: string;
+  usertype: string;
+  pushreceive: boolean;
 }
 
 export interface SignUpResponse {
@@ -108,10 +143,12 @@ export interface SignUpResponse {
 export interface SignUpResponse_DATA {
   id: number;
   name: string;
+  nickname: string;
   email: string;
-  role: string;
+  usertype: string;
   state: string;
   isVerifiedEmail: boolean;
+  pushreceive: boolean;
   createdAt: string;
 }
 
@@ -192,7 +229,11 @@ export interface MemberServiceClient {
 
   leaveMember(request: LeaveMemberRequest): Observable<LeaveMemberResponse>;
 
-  verifyEmail(request: { token: string }): Observable<VerifyEmailResponse>;
+  verifyEmail(request: VerifyEmailRequest): Observable<VerifyEmailResponse>;
+
+  checkEmailDuplication(request: CheckEmailDuplicationRequest): Observable<CheckEmailDuplicationResponse>;
+
+  checkNicknameDuplication(request: CheckNicknameDuplicationRequest): Observable<CheckNicknameDuplicationResponse>;
 }
 
 export interface MemberServiceController {
@@ -223,6 +264,17 @@ export interface MemberServiceController {
   verifyEmail(
     request: VerifyEmailRequest,
   ): Promise<VerifyEmailResponse> | Observable<VerifyEmailResponse> | VerifyEmailResponse;
+
+  checkEmailDuplication(
+    request: CheckEmailDuplicationRequest,
+  ): Promise<CheckEmailDuplicationResponse> | Observable<CheckEmailDuplicationResponse> | CheckEmailDuplicationResponse;
+
+  checkNicknameDuplication(
+    request: CheckNicknameDuplicationRequest,
+  ):
+    | Promise<CheckNicknameDuplicationResponse>
+    | Observable<CheckNicknameDuplicationResponse>
+    | CheckNicknameDuplicationResponse;
 }
 
 export function MemberServiceControllerMethods() {
@@ -238,6 +290,8 @@ export function MemberServiceControllerMethods() {
       "updateState",
       "leaveMember",
       "verifyEmail",
+      "checkEmailDuplication",
+      "checkNicknameDuplication",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

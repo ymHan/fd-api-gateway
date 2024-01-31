@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { validate } from '@tools/env.validation';
 
 import { MemberModule } from './member/member.module';
 import { BackofficeModule } from './backoffice/backoffice.module';
@@ -7,14 +9,18 @@ import { FDtionModule } from '@root/fdtion/fdtion.module';
 import { FDistModule } from '@root/4dist/fdist.module';
 
 import { RouterModule } from '@nestjs/core';
-import { EventsModule } from '@root/websocket/events.module';
+
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV}`,
+      //validate,
+    }),
     MemberModule,
     BackofficeModule,
     FDtionModule,
-    EventsModule,
     RouterModule.register([
       {
         path: 'v1',
@@ -35,4 +41,5 @@ import { EventsModule } from '@root/websocket/events.module';
     ]),
   ],
 })
+
 export class AppModule {}

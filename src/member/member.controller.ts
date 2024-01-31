@@ -1,7 +1,8 @@
-import { Body, Controller, Inject, OnModuleInit, Post, UseGuards, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Inject, OnModuleInit, Post, UseGuards, Get, Param, Query, Delete } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import {
+  MEMBER_SERVICE_NAME,
   MemberServiceClient,
   SignInResponse,
   SignUpResponse,
@@ -11,9 +12,12 @@ import {
   ValidateResponse,
   GetUserRequest,
   GetUserResponse,
-  VerifyEmailRequest,
+  //VerifyEmailRequest,
   VerifyEmailResponse,
-  MEMBER_SERVICE_NAME,
+  LeaveMemberRequest,
+  LeaveMemberResponse,
+  CheckEmailDuplicationResponse,
+  CheckNicknameDuplicationResponse,
 } from '@proto/member.pb';
 import {
   ApiTags,
@@ -55,11 +59,20 @@ export class MemberController implements OnModuleInit {
           type: 'string',
           description: '이름',
         },
+        nickname: {
+          type: 'string',
+          description: '닉네임',
+        },
         password: {
           type: 'string',
           description: '비밀번호',
         },
-        role: {
+        pushReceive: {
+          type: 'boolean',
+          description: '푸시알림 수신여부',
+          default: true,
+        },
+        userType: {
           type: 'array',
           items: {
             enum: [
@@ -72,7 +85,7 @@ export class MemberController implements OnModuleInit {
               AccountRoles.MEMBER,
             ],
           },
-          description: '사용자 권한',
+          description: '가입자 종류 및 권한',
         },
       },
     },
@@ -132,13 +145,46 @@ export class MemberController implements OnModuleInit {
   @ApiBearerAuth()
   @Get('/user/:id')
   @ApiParam({
-    name: 'id',
+    name: 'email',
     description: '사용자 ID',
     required: true,
     type: 'number',
   })
   public getUser(@Param() params: GetUserRequest): Observable<GetUserResponse> {
     return this.svc.getUser(params);
+  }
+
+  @Delete('/user/:id')
+  @ApiOperation({ summary: '4dist 탈퇴' })
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'id',
+    description: '사용자 ID',
+    required: true,
+    type: 'number',
+  })
+  public leaveMember(@Param() params: LeaveMemberRequest): Observable<LeaveMemberResponse> {
+    return this.svc.leaveMember(params);
+  }
+
+  /*
+  email 중복 체크
+  * */
+  @Get('/user/email/check')
+  public CheckEmailDuplication(@Query('email') email: string): Observable<CheckEmailDuplicationResponse> {
+    return this.svc.checkEmailDuplication({ email });
+  }
+
+  @Get('/user/nickname/check')
+  @ApiOperation({ summary: '닉네임 중복 체크' })
+  @ApiQuery({
+    name: 'nickname',
+    description: '닉네임',
+    required: true,
+    type: 'string',
+  })
+  public checkNicknameDuplication(@Query('nickname') nickname: string): Observable<CheckNicknameDuplicationResponse> {
+    return this.svc.checkNicknameDuplication({ nickname });
   }
 
   @Get('/email')

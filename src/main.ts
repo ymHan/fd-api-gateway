@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { WsAdapter } from '@nestjs/platform-ws';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -17,8 +16,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('swagger', app, document);
-  app.useWebSocketAdapter(new WsAdapter(app));
-  //app.useBodyParser('application/json');
-  await app.listen(3000);
+
+  await app.listen(process.env.PORT);
 }
 bootstrap();
