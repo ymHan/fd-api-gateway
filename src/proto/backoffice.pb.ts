@@ -4,6 +4,21 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "backoffice";
 
+export interface MakeQRCodeResponse {
+  status: number;
+  result: MakeQRCodeResponse_Result | undefined;
+  error: string[];
+}
+
+export interface MakeQRCodeResponse_Result {
+  url: string;
+}
+
+export interface MakeQRCodeRequest {
+  /** 거래처코드번호 */
+  nodeId: string;
+}
+
 export interface DeleteCustomerRequest {
   /** 거래처코드번호 */
   id: string;
@@ -475,6 +490,8 @@ export interface BO_Customer_ServiceClient {
   getCustomer(request: GetCustomerRequest): Observable<GetCustomerResponse>;
 
   listCustomer(request: ListCustomerRequest): Observable<ListCustomerResponse>;
+
+  makeQrCode(request: MakeQRCodeRequest): Observable<MakeQRCodeResponse>;
 }
 
 /**
@@ -503,11 +520,22 @@ export interface BO_Customer_ServiceController {
   listCustomer(
     request: ListCustomerRequest,
   ): Promise<ListCustomerResponse> | Observable<ListCustomerResponse> | ListCustomerResponse;
+
+  makeQrCode(
+    request: MakeQRCodeRequest,
+  ): Promise<MakeQRCodeResponse> | Observable<MakeQRCodeResponse> | MakeQRCodeResponse;
 }
 
 export function BO_Customer_ServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createCustomer", "updateCustomer", "deleteCustomer", "getCustomer", "listCustomer"];
+    const grpcMethods: string[] = [
+      "createCustomer",
+      "updateCustomer",
+      "deleteCustomer",
+      "getCustomer",
+      "listCustomer",
+      "makeQrCode",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("BO_Customer_Service", method)(constructor.prototype[method], method, descriptor);

@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
-import { MemberServiceClient, MEMBER_SERVICE_NAME, ValidateResponse } from '@proto/member.pb';
+import { MemberServiceClient, MEMBER_SERVICE_NAME } from '@proto/member.pb';
 
 @Injectable()
 export class MemberService {
@@ -12,9 +11,5 @@ export class MemberService {
 
   public onModuleInit(): void {
     this.svc = this.client.getService<MemberServiceClient>(MEMBER_SERVICE_NAME);
-  }
-
-  public validate(token: string): Promise<ValidateResponse> {
-    return firstValueFrom(this.svc.validate({ token }));
   }
 }

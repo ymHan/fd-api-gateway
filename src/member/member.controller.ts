@@ -1,4 +1,17 @@
-import { Body, Controller, Inject, OnModuleInit, Post, UseGuards, Get, Param, Query, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Inject,
+  OnModuleInit,
+  Post,
+  Get,
+  Param,
+  Query,
+  Delete,
+  Patch,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import {
@@ -8,16 +21,18 @@ import {
   SignUpResponse,
   SignInRequest,
   SignUpRequest,
-  ValidateRequest,
   ValidateResponse,
   GetUserRequest,
   GetUserResponse,
-  //VerifyEmailRequest,
   VerifyEmailResponse,
   LeaveMemberRequest,
   LeaveMemberResponse,
   CheckEmailDuplicationResponse,
   CheckNicknameDuplicationResponse,
+  UpdatePasswordRequest,
+  UpdatePasswordResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
 } from '@proto/member.pb';
 import {
   ApiTags,
@@ -30,7 +45,6 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { AccountRoles } from '@root/models/enum';
-import { MemberGuard } from './member.guard';
 
 @ApiTags('Account')
 @Controller('account')
@@ -90,8 +104,8 @@ export class MemberController implements OnModuleInit {
       },
     },
   })
-  public signUp(@Body() body: SignUpRequest): Observable<SignUpResponse> {
-    return this.svc.signUp(body);
+  public signUp(@Req() req: Request, @Body() signUpRequest: SignUpRequest): Observable<SignUpResponse> {
+    return this.svc.signUp(signUpRequest);
   }
 
   @Post('signin')
@@ -133,11 +147,18 @@ export class MemberController implements OnModuleInit {
   }
 
   @Post('validate')
-  @UseGuards(MemberGuard)
   @ApiOperation({ summary: '사용자 확인' })
   @ApiBearerAuth()
-  public validate(@Body() body: ValidateRequest): Observable<ValidateResponse> {
-    return this.svc.validate(body);
+  public validate(@Req() request: Request): Observable<ValidateResponse> {
+    const { authorization }: any = request.headers;
+
+    if (!authorization || authorization.trim() === '') {
+      throw new UnauthorizedException('Please provide token');
+    }
+
+    const token: string = authorization.replace(/bearer/gim, '').trim();
+
+    return this.svc.validate({ token });
   }
 
   //@UseGuards(MemberGuard)
@@ -145,7 +166,7 @@ export class MemberController implements OnModuleInit {
   @ApiBearerAuth()
   @Get('/user/:id')
   @ApiParam({
-    name: 'email',
+    name: 'id',
     description: '사용자 ID',
     required: true,
     type: 'number',
@@ -197,5 +218,45 @@ export class MemberController implements OnModuleInit {
   })
   public verifyEmail(@Query('token') token: string): Observable<VerifyEmailResponse> {
     return this.svc.verifyEmail({ token });
+  }
+
+  @Patch('/user/password/update')
+  @ApiOperation({ summary: '비밀번호 변경' })
+  @ApiBearerAuth()
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: '사용자 계정 (이메일주소)',
+        },
+        password: {
+          type: 'string',
+          description: '비밀번호',
+        },
+      },
+    },
+  })
+  public updatePassword(@Body() body: UpdatePasswordRequest): Observable<UpdatePasswordResponse> {
+    return this.svc.updatePassword(body);
+  }
+
+  @Post('/user/password/reset')
+  @ApiOperation({ summary: '비밀번호 초기화' })
+  @ApiBearerAuth()
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: '사용자 계정 (이메일주소)',
+        },
+      },
+    },
+  })
+  public resetPassword(@Body() body: ResetPasswordRequest): Observable<ResetPasswordResponse> {
+    return this.svc.resetPassword(body);
   }
 }

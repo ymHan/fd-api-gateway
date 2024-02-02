@@ -5,6 +5,40 @@ import { Timestamp } from "./google/protobuf/timestamp.pb";
 
 export const protobufPackage = "member";
 
+export interface ResetPasswordResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: string[];
+}
+
+export interface ResetPasswordResponse_DATA {
+  token?: string | undefined;
+  error?: string | undefined;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  password: string;
+}
+
+export interface UpdatePasswordRequest {
+  token: string;
+  password: string;
+}
+
+export interface UpdatePasswordResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: string[];
+}
+
+export interface UpdatePasswordResponse_DATA {
+  result?: boolean | undefined;
+  error?: string | undefined;
+}
+
 export interface CheckNicknameDuplicationRequest {
   nickname: string;
 }
@@ -61,7 +95,12 @@ export interface LeaveMemberResponse {
   result: string;
   status: number;
   message: string;
-  data: string[];
+  data: LeaveMemberResponse_DATA[];
+}
+
+export interface LeaveMemberResponse_DATA {
+  result?: boolean | undefined;
+  error?: string | undefined;
 }
 
 export interface User {
@@ -153,25 +192,26 @@ export interface SignUpResponse_DATA {
 }
 
 export interface UpdateRequest {
-  id: number;
+  email: string;
+  name: string;
+  nickname: string;
 }
 
 export interface UpdateResponse {
   result: string;
   status: number;
   message: string;
-  data: User[];
+  data: UpdateResponse_DATA[];
 }
 
-export interface DeleteRequest {
-  userId: number;
-}
-
-export interface DeleteResponse {
-  result: string;
-  status: number;
-  message: string;
-  data: string[];
+export interface UpdateResponse_DATA {
+  id: number;
+  email: string;
+  name: string;
+  nickname: string;
+  usertype: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface SignInRequest {
@@ -215,7 +255,7 @@ export interface MemberServiceClient {
 
   update(request: UpdateRequest): Observable<UpdateResponse>;
 
-  delete(request: DeleteRequest): Observable<DeleteResponse>;
+  /** rpc Delete(DeleteRequest) returns (DeleteResponse) {} // 멤버 탈퇴 / 삭제 등 백오피스 기능 */
 
   signIn(request: SignInRequest): Observable<SignInResponse>;
 
@@ -234,6 +274,10 @@ export interface MemberServiceClient {
   checkEmailDuplication(request: CheckEmailDuplicationRequest): Observable<CheckEmailDuplicationResponse>;
 
   checkNicknameDuplication(request: CheckNicknameDuplicationRequest): Observable<CheckNicknameDuplicationResponse>;
+
+  updatePassword(request: UpdatePasswordRequest): Observable<UpdatePasswordResponse>;
+
+  resetPassword(request: ResetPasswordRequest): Observable<ResetPasswordResponse>;
 }
 
 export interface MemberServiceController {
@@ -241,7 +285,7 @@ export interface MemberServiceController {
 
   update(request: UpdateRequest): Promise<UpdateResponse> | Observable<UpdateResponse> | UpdateResponse;
 
-  delete(request: DeleteRequest): Promise<DeleteResponse> | Observable<DeleteResponse> | DeleteResponse;
+  /** rpc Delete(DeleteRequest) returns (DeleteResponse) {} // 멤버 탈퇴 / 삭제 등 백오피스 기능 */
 
   signIn(request: SignInRequest): Promise<SignInResponse> | Observable<SignInResponse> | SignInResponse;
 
@@ -275,6 +319,14 @@ export interface MemberServiceController {
     | Promise<CheckNicknameDuplicationResponse>
     | Observable<CheckNicknameDuplicationResponse>
     | CheckNicknameDuplicationResponse;
+
+  updatePassword(
+    request: UpdatePasswordRequest,
+  ): Promise<UpdatePasswordResponse> | Observable<UpdatePasswordResponse> | UpdatePasswordResponse;
+
+  resetPassword(
+    request: ResetPasswordRequest,
+  ): Promise<ResetPasswordResponse> | Observable<ResetPasswordResponse> | ResetPasswordResponse;
 }
 
 export function MemberServiceControllerMethods() {
@@ -282,7 +334,6 @@ export function MemberServiceControllerMethods() {
     const grpcMethods: string[] = [
       "signUp",
       "update",
-      "delete",
       "signIn",
       "validate",
       "getUser",
@@ -292,6 +343,8 @@ export function MemberServiceControllerMethods() {
       "verifyEmail",
       "checkEmailDuplication",
       "checkNicknameDuplication",
+      "updatePassword",
+      "resetPassword",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
