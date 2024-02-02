@@ -81,12 +81,12 @@ export class MemberController implements OnModuleInit {
           type: 'string',
           description: '비밀번호',
         },
-        pushReceive: {
+        pushreceive: {
           type: 'boolean',
           description: '푸시알림 수신여부',
           default: true,
         },
-        userType: {
+        usertype: {
           type: 'array',
           items: {
             enum: [

@@ -5,6 +5,22 @@ import { Timestamp } from "./google/protobuf/timestamp.pb";
 
 export const protobufPackage = "member";
 
+export interface EmailVerificationCodeRequest {
+  email: string;
+}
+
+export interface EmailVerificationCodeResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: string[];
+}
+
+export interface EmailVerificationCodeResponse_DATA {
+  code?: string | undefined;
+  error?: string | undefined;
+}
+
 export interface ResetPasswordResponse {
   result: string;
   status: number;
@@ -20,6 +36,7 @@ export interface ResetPasswordResponse_DATA {
 export interface ResetPasswordRequest {
   email: string;
   password: string;
+  code: string;
 }
 
 export interface UpdatePasswordRequest {
@@ -168,18 +185,11 @@ export interface SignUpRequest {
   nickname: string;
   email: string;
   password: string;
-  usertype: string;
   pushreceive: boolean;
+  usertype: string;
 }
 
-export interface SignUpResponse {
-  result: string;
-  status: number;
-  message: string;
-  data: SignUpResponse_DATA[];
-}
-
-export interface SignUpResponse_DATA {
+export interface SignUpResult {
   id: number;
   name: string;
   nickname: string;
@@ -191,20 +201,20 @@ export interface SignUpResponse_DATA {
   createdAt: string;
 }
 
+export interface SignUpResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: SignUpResult[];
+}
+
 export interface UpdateRequest {
   email: string;
   name: string;
   nickname: string;
 }
 
-export interface UpdateResponse {
-  result: string;
-  status: number;
-  message: string;
-  data: UpdateResponse_DATA[];
-}
-
-export interface UpdateResponse_DATA {
+export interface UpdateResult {
   id: number;
   email: string;
   name: string;
@@ -212,6 +222,13 @@ export interface UpdateResponse_DATA {
   usertype: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface UpdateResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: UpdateResult[];
 }
 
 export interface SignInRequest {
@@ -278,6 +295,8 @@ export interface MemberServiceClient {
   updatePassword(request: UpdatePasswordRequest): Observable<UpdatePasswordResponse>;
 
   resetPassword(request: ResetPasswordRequest): Observable<ResetPasswordResponse>;
+
+  emailVerificationCode(request: EmailVerificationCodeRequest): Observable<EmailVerificationCodeResponse>;
 }
 
 export interface MemberServiceController {
@@ -327,6 +346,10 @@ export interface MemberServiceController {
   resetPassword(
     request: ResetPasswordRequest,
   ): Promise<ResetPasswordResponse> | Observable<ResetPasswordResponse> | ResetPasswordResponse;
+
+  emailVerificationCode(
+    request: EmailVerificationCodeRequest,
+  ): Promise<EmailVerificationCodeResponse> | Observable<EmailVerificationCodeResponse> | EmailVerificationCodeResponse;
 }
 
 export function MemberServiceControllerMethods() {
@@ -345,6 +368,7 @@ export function MemberServiceControllerMethods() {
       "checkNicknameDuplication",
       "updatePassword",
       "resetPassword",
+      "emailVerificationCode",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
