@@ -32,7 +32,7 @@ import {
   UpdatePasswordRequest,
   UpdatePasswordResponse,
   ResetPasswordRequest,
-  ResetPasswordResponse,
+  ResetPasswordResponse, FindEmailRequest, FindEmailResponse, FindPasswordRequest, FindPasswordResponse
 } from '@proto/member.pb';
 import {
   ApiTags,
@@ -246,17 +246,61 @@ export class MemberController implements OnModuleInit {
     return this.svc.updatePassword(body);
   }
 
-  @Post('/user/password/reset')
-  @ApiOperation({ summary: '비밀번호 초기화' })
-  @ApiBearerAuth()
+  @Post('/user/password/email')
+  @ApiOperation({ summary: '비밀번호 초기화를 위해서 이메일을 확인한다.' })
+  @ApiConsumes('application/x-www-form-urlencoded')
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
         email: {
           type: 'string',
-          description: '사용자 계정 (이메일주소)',
+          description: '가입시 사용한 이메일주소',
         },
+      },
+    },
+  })
+  public findEmail(@Body() body: FindEmailRequest): Observable<FindEmailResponse> {
+    return this.svc.findEmail(body);
+  }
+
+  @Post('/user/password/reset')
+  @ApiOperation({ summary: '비밀번호 초기화를 위해서 이메일과 인증코드를 확인한다.' })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: '가입시 사용한 이메일주소',
+        },
+        code: {
+          type: 'string',
+          description: '이메일로 전송된 인증코드',
+        }
+      },
+    },
+  })
+  public FindPassword(@Body() body: FindPasswordRequest): Observable<FindPasswordResponse> {
+    return this.svc.findEmail(body);
+  }
+
+  @Post('/user/password/update')
+  @ApiOperation({ summary: '토큰 없이 비밀번호 초기화' })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: '가입시 사용한 이메일주소',
+        },
+        password: {
+          type: 'string',
+          description: '이메일로 전송된 인증코드',
+        }
       },
     },
   })

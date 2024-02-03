@@ -5,6 +5,39 @@ import { Timestamp } from "./google/protobuf/timestamp.pb";
 
 export const protobufPackage = "member";
 
+export interface FindEmailRequest {
+  email: string;
+}
+
+export interface FindEmailResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: FindEmailResponse_DATA[];
+}
+
+export interface FindEmailResponse_DATA {
+  email?: string | undefined;
+  error?: string | undefined;
+}
+
+export interface FindPasswordRequest {
+  email: string;
+  code: string;
+}
+
+export interface FindPasswordResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: FindPasswordResponse_DATA[];
+}
+
+export interface FindPasswordResponse_DATA {
+  token?: string | undefined;
+  error?: string | undefined;
+}
+
 export interface EmailVerificationCodeRequest {
   email: string;
 }
@@ -301,6 +334,10 @@ export interface MemberServiceClient {
   resetPassword(request: ResetPasswordRequest): Observable<ResetPasswordResponse>;
 
   emailVerificationCode(request: EmailVerificationCodeRequest): Observable<EmailVerificationCodeResponse>;
+
+  findEmail(request: FindEmailRequest): Observable<FindEmailResponse>;
+
+  findPassword(request: FindPasswordRequest): Observable<FindPasswordResponse>;
 }
 
 export interface MemberServiceController {
@@ -354,6 +391,12 @@ export interface MemberServiceController {
   emailVerificationCode(
     request: EmailVerificationCodeRequest,
   ): Promise<EmailVerificationCodeResponse> | Observable<EmailVerificationCodeResponse> | EmailVerificationCodeResponse;
+
+  findEmail(request: FindEmailRequest): Promise<FindEmailResponse> | Observable<FindEmailResponse> | FindEmailResponse;
+
+  findPassword(
+    request: FindPasswordRequest,
+  ): Promise<FindPasswordResponse> | Observable<FindPasswordResponse> | FindPasswordResponse;
 }
 
 export function MemberServiceControllerMethods() {
@@ -373,6 +416,8 @@ export function MemberServiceControllerMethods() {
       "updatePassword",
       "resetPassword",
       "emailVerificationCode",
+      "findEmail",
+      "findPassword",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
