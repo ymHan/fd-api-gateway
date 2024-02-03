@@ -237,6 +237,10 @@ export interface SignInRequest {
 }
 
 export interface SignInResult {
+  email?: string | undefined;
+  name?: string | undefined;
+  nickname?: string | undefined;
+  pushreceive?: boolean | undefined;
   token?: string | undefined;
   error?: string | undefined;
 }

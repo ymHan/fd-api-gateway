@@ -135,6 +135,10 @@ export class MemberController implements OnModuleInit {
         message: 'OK',
         data: [
           {
+            "email": "email@4dreplay.com",
+            "name": "홍길동",
+            "nickname": "닉네임",
+            "pushreceive": true,
             token:
               'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsIm5hbWUiOiLtlZzsmIHrr7wiLCJlbWFpbCI6Im9ueXhzYXJkQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNTkwNTM1MywiZXhwIjoxNzM3NDQxMzUzfQ.1DHBsyj7EBH4O4WCbJBlaCf2K-cpoOkmlcsR8IUMHcI',
           },
