@@ -176,7 +176,7 @@ export class MemberController implements OnModuleInit {
   }
 
   @Delete('/user/:id')
-  @ApiOperation({ summary: '4dist 탈퇴' })
+  @ApiOperation({ summary: 'fdist 탈퇴' })
   @ApiBearerAuth()
   @ApiParam({
     name: 'id',

@@ -20,8 +20,8 @@
     "proto:member": "protoc --plugin=node_modules/.bin/protoc-gen-ts_proto -I=./node_modules/fd-proto/proto --ts_proto_out=src/proto/ node_modules/fd-proto/proto/member.proto --ts_proto_opt=nestJs=true --ts_proto_opt=fileSuffix=.pb",
     "proto:backoffice": "protoc --plugin=node_modules/.bin/protoc-gen-ts_proto -I=./node_modules/fd-proto/proto --ts_proto_out=src/proto/ node_modules/fd-proto/proto/backoffice.proto --ts_proto_opt=nestJs=true --ts_proto_opt=fileSuffix=.pb",
     "proto:fdition": "protoc --plugin=node_modules/.bin/protoc-gen-ts_proto -I=./node_modules/fd-proto/proto --ts_proto_out=src/proto/ node_modules/fd-proto/proto/fdition.proto --ts_proto_opt=nestJs=true --ts_proto_opt=fileSuffix=.pb",
-    "proto:all": "npm run proto:member && npm run proto:backoffice && npm run proto:fdition",
-    "proto": "npm run proto:install && npm run proto:all"
+    "proto:fdist": "protoc --plugin=node_modules/.bin/protoc-gen-ts_proto -I=./node_modules/fd-proto/proto --ts_proto_out=src/proto/ node_modules/fd-proto/proto/fdist.proto --ts_proto_opt=nestJs=true --ts_proto_opt=fileSuffix=.pb",
+    "proto": "npm run proto:install && npm run proto:member && npm run proto:backoffice && npm run proto:fdition && npm run proto:fdist"
   },
   "author": "",
   "license": "ISC",
