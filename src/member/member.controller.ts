@@ -32,7 +32,17 @@ import {
   UpdatePasswordRequest,
   UpdatePasswordResponse,
   ResetPasswordRequest,
-  ResetPasswordResponse, FindEmailRequest, FindEmailResponse, FindPasswordRequest, FindPasswordResponse
+  ResetPasswordResponse,
+  FindEmailRequest,
+  FindEmailResponse,
+  FindPasswordRequest,
+  FindPasswordResponse,
+  UpdateNicknameResponse,
+  UpdateNicknameRequest,
+  UpdatePushReceiveResponse,
+  UpdatePushReceiveRequest,
+  UpdateEmailReceiveResponse,
+  UpdateEmailReceiveRequest,
 } from '@proto/member.pb';
 import {
   ApiTags,
@@ -86,6 +96,11 @@ export class MemberController implements OnModuleInit {
           description: '푸시알림 수신여부',
           default: true,
         },
+        emailreceive: {
+          type: 'boolean',
+          description: '이메일 수신여부',
+          default: true,
+        },
         usertype: {
           type: 'array',
           items: {
@@ -135,10 +150,12 @@ export class MemberController implements OnModuleInit {
         message: 'OK',
         data: [
           {
-            "email": "email@4dreplay.com",
-            "name": "홍길동",
-            "nickname": "닉네임",
-            "pushreceive": true,
+            id: 1,
+            email: 'email@4dreplay.com',
+            name: '홍길동',
+            nickname: '닉네임',
+            pushreceive: true,
+            emailreceive: true,
             token:
               'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsIm5hbWUiOiLtlZzsmIHrr7wiLCJlbWFpbCI6Im9ueXhzYXJkQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNTkwNTM1MywiZXhwIjoxNzM3NDQxMzUzfQ.1DHBsyj7EBH4O4WCbJBlaCf2K-cpoOkmlcsR8IUMHcI',
           },
@@ -278,7 +295,7 @@ export class MemberController implements OnModuleInit {
         code: {
           type: 'string',
           description: '이메일로 전송된 인증코드',
-        }
+        },
       },
     },
   })
@@ -300,11 +317,92 @@ export class MemberController implements OnModuleInit {
         password: {
           type: 'string',
           description: '이메일로 전송된 인증코드',
-        }
+        },
       },
     },
   })
   public resetPassword(@Body() body: ResetPasswordRequest): Observable<ResetPasswordResponse> {
     return this.svc.resetPassword(body);
+  }
+
+  @Patch('/user/:id/nickname')
+  @ApiOperation({ summary: '닉네임 변경하기' })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiParam({
+    name: 'id',
+    description: '사용자 ID',
+    required: true,
+    type: 'number',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        nickname: {
+          type: 'string',
+          description: '변경할 닉네임',
+        },
+      },
+    },
+  })
+  public updateNickname(@Param('id') id: number, @Body('nickname') nickname: string): Observable<UpdateNicknameResponse> {
+    const payload: UpdateNicknameRequest = { id, nickname };
+    return this.svc.updateNickname(payload);
+  }
+
+  @Patch('/user/:id/pushreceive')
+  @ApiOperation({ summary: '푸쉬 수신 알림 변경하기' })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiParam({
+    name: 'id',
+    description: '사용자 ID',
+    required: true,
+    type: 'number',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        pushreceive: {
+          type: 'boolean',
+          description: 'true || false',
+        },
+      },
+    },
+  })
+  public updatePushReceive(
+    @Param('id') id: number,
+    @Body('pushreceive') pushreceive: boolean,
+  ): Observable<UpdatePushReceiveResponse> {
+    const payload: UpdatePushReceiveRequest = { id, pushreceive };
+    return this.svc.updatePushReceive(payload);
+  }
+
+  @Patch('/user/:id/emailreceive')
+  @ApiOperation({ summary: '이메일 수신 여부 변경하기' })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiParam({
+    name: 'id',
+    description: '사용자 ID',
+    required: true,
+    type: 'number',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        emailreceive: {
+          type: 'boolean',
+          description: 'true || false',
+        },
+      },
+    },
+  })
+  public updateEmailReceive(
+    @Param('id') id: number,
+    @Body('emailreceive') emailreceive: boolean,
+  ): Observable<UpdateEmailReceiveResponse> {
+    const payload: UpdateEmailReceiveRequest = { id, emailreceive };
+    return this.svc.updateEmailReceive(payload);
   }
 }

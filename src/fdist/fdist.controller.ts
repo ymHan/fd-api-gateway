@@ -1,16 +1,18 @@
 import { Controller, Inject, OnModuleInit, Get, Param, Query } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
-import { F_DIST_SERVICE_NAME, FDistServiceClient, GetVideoByIdRequest, GetVideoListResponse } from '@proto/fdist.pb';
+import {
+  F_DIST_SERVICE_NAME,
+  FDistServiceClient,
+  GetCategorySubResponse,
+  GetVideoByIdRequest,
+  GetVideoListResponse,
+} from '@proto/fdist.pb';
 
 import {
   ApiTags,
   ApiParam,
   ApiOperation,
-  ApiConsumes,
-  ApiBody,
-  ApiBearerAuth,
-  ApiCreatedResponse,
   ApiQuery,
 } from '@nestjs/swagger';
 
@@ -62,5 +64,10 @@ export class FDistController implements OnModuleInit {
   @Get('videos/:id')
   public getVideoById(@Param() params: GetVideoByIdRequest): Observable<any> {
     return this.svc.getVideoById(params);
+  }
+
+  @Get('categories')
+  public getCategories(): Observable<GetCategorySubResponse> {
+    return this.svc.getCategorySub({});
   }
 }
