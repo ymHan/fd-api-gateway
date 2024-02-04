@@ -5,6 +5,57 @@ import { Timestamp } from "./google/protobuf/timestamp.pb";
 
 export const protobufPackage = "member";
 
+export interface UpdateEmailReceiveRequest {
+  id: number;
+  emailreceive: boolean;
+}
+
+export interface UpdateEmailReceiveResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: UpdateEmailReceiveResponse_DATA[];
+}
+
+export interface UpdateEmailReceiveResponse_DATA {
+  result?: boolean | undefined;
+  error?: string | undefined;
+}
+
+export interface UpdatePushReceiveRequest {
+  id: number;
+  pushreceive: boolean;
+}
+
+export interface UpdatePushReceiveResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: UpdatePushReceiveResponse_DATA[];
+}
+
+export interface UpdatePushReceiveResponse_DATA {
+  result?: boolean | undefined;
+  error?: string | undefined;
+}
+
+export interface UpdateNicknameRequest {
+  id: number;
+  nickname: string;
+}
+
+export interface UpdateNicknameResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: UpdateNicknameResponse_DATA[];
+}
+
+export interface UpdateNicknameResponse_DATA {
+  result?: boolean | undefined;
+  error?: string | undefined;
+}
+
 export interface FindEmailRequest {
   email: string;
 }
@@ -218,6 +269,7 @@ export interface SignUpRequest {
   email: string;
   password: string;
   pushreceive: boolean;
+  emailreceive: boolean;
   usertype: string;
 }
 
@@ -228,7 +280,7 @@ export interface SignUpResult {
   email: string;
   usertype: string;
   state: string;
-  isVerifiedEmail: boolean;
+  emailreceive: boolean;
   pushreceive: boolean;
   createdAt: string;
 }
@@ -241,19 +293,16 @@ export interface SignUpResponse {
 }
 
 export interface UpdateRequest {
-  email: string;
+  id: number;
   name: string;
   nickname: string;
+  pushreceive: string;
+  emailreceive: string;
 }
 
 export interface UpdateResult {
   id: number;
   email: string;
-  name: string;
-  nickname: string;
-  usertype: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface UpdateResponse {
@@ -269,10 +318,12 @@ export interface SignInRequest {
 }
 
 export interface SignInResult {
+  id?: number | undefined;
   email?: string | undefined;
   name?: string | undefined;
   nickname?: string | undefined;
   pushreceive?: boolean | undefined;
+  emailreceive?: boolean | undefined;
   token?: string | undefined;
   error?: string | undefined;
 }
@@ -337,6 +388,12 @@ export interface MemberServiceClient {
   findEmail(request: FindEmailRequest): Observable<FindEmailResponse>;
 
   findPassword(request: FindPasswordRequest): Observable<FindPasswordResponse>;
+
+  updatePushReceive(request: UpdatePushReceiveRequest): Observable<UpdatePushReceiveResponse>;
+
+  updateEmailReceive(request: UpdateEmailReceiveRequest): Observable<UpdateEmailReceiveResponse>;
+
+  updateNickname(request: UpdateNicknameRequest): Observable<UpdateNicknameResponse>;
 }
 
 export interface MemberServiceController {
@@ -396,6 +453,18 @@ export interface MemberServiceController {
   findPassword(
     request: FindPasswordRequest,
   ): Promise<FindPasswordResponse> | Observable<FindPasswordResponse> | FindPasswordResponse;
+
+  updatePushReceive(
+    request: UpdatePushReceiveRequest,
+  ): Promise<UpdatePushReceiveResponse> | Observable<UpdatePushReceiveResponse> | UpdatePushReceiveResponse;
+
+  updateEmailReceive(
+    request: UpdateEmailReceiveRequest,
+  ): Promise<UpdateEmailReceiveResponse> | Observable<UpdateEmailReceiveResponse> | UpdateEmailReceiveResponse;
+
+  updateNickname(
+    request: UpdateNicknameRequest,
+  ): Promise<UpdateNicknameResponse> | Observable<UpdateNicknameResponse> | UpdateNicknameResponse;
 }
 
 export function MemberServiceControllerMethods() {
@@ -417,6 +486,9 @@ export function MemberServiceControllerMethods() {
       "emailVerificationCode",
       "findEmail",
       "findPassword",
+      "updatePushReceive",
+      "updateEmailReceive",
+      "updateNickname",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
