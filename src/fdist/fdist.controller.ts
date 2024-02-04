@@ -1,4 +1,4 @@
-import { Controller, Inject, OnModuleInit, Get, Param, Query } from '@nestjs/common';
+import { Controller, Inject, OnModuleInit, Get, Param, Query, Body, Post } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import {
@@ -6,14 +6,14 @@ import {
   FDistServiceClient,
   GetCategorySubResponse,
   GetVideoByIdRequest,
-  GetVideoListResponse,
+  GetVideoListResponse, ToggleLikeRequest,
 } from '@proto/fdist.pb';
 
 import {
   ApiTags,
   ApiParam,
   ApiOperation,
-  ApiQuery,
+  ApiQuery, ApiBody, ApiConsumes,
 } from '@nestjs/swagger';
 
 @ApiTags('FDist - Video')
@@ -67,7 +67,30 @@ export class FDistController implements OnModuleInit {
   }
 
   @Get('categories')
+  @ApiOperation({ summary: '서브 카테고리 조회' })
   public getCategories(): Observable<GetCategorySubResponse> {
     return this.svc.getCategorySub({});
+  }
+
+  @Post('like')
+  @ApiOperation({ summary: '좋아요 토글' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userId: {
+          type: 'number',
+          description: '사용자 아이디',
+        },
+        videoId: {
+          type: 'number',
+          description: '영상 아이디',
+        },
+      },
+    },
+  })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  public toggleLike(@Body() toggleLikeRequest: ToggleLikeRequest): Observable<any> {
+    return this.svc.toggleLike(toggleLikeRequest);
   }
 }
