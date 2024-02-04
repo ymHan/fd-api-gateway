@@ -6,15 +6,13 @@ import {
   FDistServiceClient,
   GetCategorySubResponse,
   GetVideoByIdRequest,
-  GetVideoListResponse, ToggleLikeRequest,
+  GetVideoListResponse,
+  ReportVideoResponse,
+  ToggleLikeRequest,
+  ReportVideoRequest,
 } from '@proto/fdist.pb';
 
-import {
-  ApiTags,
-  ApiParam,
-  ApiOperation,
-  ApiQuery, ApiBody, ApiConsumes,
-} from '@nestjs/swagger';
+import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from '@nestjs/swagger';
 
 @ApiTags('FDist - Video')
 @Controller({ path: 'video' })
@@ -44,7 +42,6 @@ export class FDistController implements OnModuleInit {
     description: 'limit',
     type: 'number',
   })
-
   @Get('videos')
   public getVideos(
     @Query('cat') cat: string,
@@ -92,5 +89,35 @@ export class FDistController implements OnModuleInit {
   @ApiConsumes('application/x-www-form-urlencoded')
   public toggleLike(@Body() toggleLikeRequest: ToggleLikeRequest): Observable<any> {
     return this.svc.toggleLike(toggleLikeRequest);
+  }
+
+  @Post('report')
+  @ApiOperation({ summary: '영상 신고' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userId: {
+          type: 'number',
+          description: '사용자 아이디',
+        },
+        videoId: {
+          type: 'number',
+          description: '영상 아이디',
+        },
+        reportType: {
+          type: 'number',
+          description: '신고 타입',
+        },
+        report: {
+          type: 'string',
+          description: '신고 내용',
+        },
+      },
+    },
+  })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  public reportVideo(@Body() reportVideoRequest: ReportVideoRequest): Observable<ReportVideoResponse> {
+    return this.svc.reportVideo(reportVideoRequest);
   }
 }
