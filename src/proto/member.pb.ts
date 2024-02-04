@@ -46,7 +46,7 @@ export interface EmailVerificationCodeResponse {
   result: string;
   status: number;
   message: string;
-  data: string[];
+  data: EmailVerificationCodeResponse_DATA[];
 }
 
 export interface EmailVerificationCodeResponse_DATA {
@@ -58,7 +58,7 @@ export interface ResetPasswordResponse {
   result: string;
   status: number;
   message: string;
-  data: string[];
+  data: ResetPasswordResponse_DATA[];
 }
 
 export interface ResetPasswordResponse_DATA {
@@ -69,7 +69,6 @@ export interface ResetPasswordResponse_DATA {
 export interface ResetPasswordRequest {
   email: string;
   password: string;
-  code: string;
 }
 
 export interface UpdatePasswordRequest {
