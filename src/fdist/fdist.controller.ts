@@ -10,7 +10,7 @@ import {
   ReportVideoResponse,
   ToggleLikeRequest,
   ReportVideoRequest,
-  GetCategoryResponse,
+  GetCategoryResponse, GetRecordTypeResponse, GetVideoRecordTypeResponse
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from '@nestjs/swagger';
@@ -52,6 +52,33 @@ export class FDistController implements OnModuleInit {
     const payload = { cat, page, limit };
     return this.svc.getVideos(payload);
   }
+
+  @ApiOperation({ summary: '영상 레코드 타입 별 목록' })
+  @ApiQuery({
+    name: 'type',
+    description: 'type',
+    type: 'string',
+  })
+  @ApiQuery({
+    name: 'page',
+    description: 'page',
+    type: 'number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'limit',
+    type: 'number',
+  })
+  @Get('videos/recordType')
+  public getVideoRecordType(
+    @Query('type') type: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ): Observable<GetVideoRecordTypeResponse> {
+    const payload = { type, page, limit };
+    return this.svc.getVideoRecordType(payload);
+  }
+
   @ApiOperation({ summary: '영상 정보 조회' })
   @ApiParam({
     name: 'id',
@@ -74,6 +101,12 @@ export class FDistController implements OnModuleInit {
   @ApiOperation({ summary: '서브 카테고리 조회' })
   public getCategories(): Observable<GetCategorySubResponse> {
     return this.svc.getCategorySub({});
+  }
+
+  @Get('recordType')
+  @ApiOperation({ summary: '레코드 타입 조회' })
+  public getRecordType(): Observable<GetRecordTypeResponse> {
+    return this.svc.getRecordType({});
   }
 
   @Post('like')
