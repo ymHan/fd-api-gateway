@@ -10,6 +10,7 @@ import {
   ReportVideoResponse,
   ToggleLikeRequest,
   ReportVideoRequest,
+  GetCategoryResponse,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from '@nestjs/swagger';
@@ -61,6 +62,12 @@ export class FDistController implements OnModuleInit {
   @Get('videos/:id')
   public getVideoById(@Param() params: GetVideoByIdRequest): Observable<any> {
     return this.svc.getVideoById(params);
+  }
+
+  @Get('category')
+  @ApiOperation({ summary: '카테고리 조회' })
+  public getCategory(): Observable<GetCategoryResponse> {
+    return this.svc.getCategory({});
   }
 
   @Get('categories')
