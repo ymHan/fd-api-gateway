@@ -10,7 +10,7 @@ import {
   ReportVideoResponse,
   ToggleLikeRequest,
   ReportVideoRequest,
-  GetCategoryResponse, GetRecordTypeResponse, GetVideoRecordTypeResponse
+  GetCategoryResponse, GetRecordTypeResponse, GetVideoRecordTypeResponse, GetLikeCheckRequest, GetLikeCheckResponse,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from '@nestjs/swagger';
@@ -131,6 +131,23 @@ export class FDistController implements OnModuleInit {
     return this.svc.toggleLike(toggleLikeRequest);
   }
 
+  @Get('like')
+  @ApiOperation({ summary: '좋아요 여부 조회' })
+  @ApiQuery({
+    name: 'userId',
+    description: '사용자 아이디',
+    type: 'number',
+  })
+  @ApiQuery({
+    name: 'videoId',
+    description: '영상 아이디',
+    type: 'number',
+  })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  public getLikeCheck(@Query() payload: GetLikeCheckRequest): Observable<GetLikeCheckResponse> {
+    return this.svc.getLikeCheck(payload);
+  }
+
   @Post('report')
   @ApiOperation({ summary: '영상 신고' })
   @ApiBody({
@@ -160,4 +177,6 @@ export class FDistController implements OnModuleInit {
   public reportVideo(@Body() reportVideoRequest: ReportVideoRequest): Observable<ReportVideoResponse> {
     return this.svc.reportVideo(reportVideoRequest);
   }
+
+
 }
