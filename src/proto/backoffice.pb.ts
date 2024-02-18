@@ -20,11 +20,70 @@ export interface defaultResult {
   message: string;
 }
 
+export interface V1DeleteVideoRequest {
+  id: number;
+}
+
+export interface V1DeleteVideoResponse {
+  result: string;
+  status: number;
+  message: string;
+}
+
+export interface V1ListVideoRequest {
+  page: number;
+  limit: number;
+  sort: string;
+  order: string;
+}
+
+export interface V1ListVideoResponse {
+  result: string;
+  status: number;
+  message: string;
+  meta: V1ListVideoResponse_Paging | undefined;
+  data: v1Result[];
+}
+
+export interface V1ListVideoResponse_Paging {
+  page: number;
+  limit: number;
+  totalCount: number;
+  totalPage: number;
+  sort: string;
+  order: string;
+}
+
 export interface V1GetVideoResponse {
   result: string;
   status: number;
   message: string;
-  data: v1Result | undefined;
+  data: V1GetVideoResponse_DATA | undefined;
+}
+
+export interface V1GetVideoResponse_DATA {
+  id: number;
+  email: string;
+  title: string;
+  subTitle: string;
+  description: string;
+  ownerName: string;
+  ownerNickName: string;
+  ownerChannelName: string;
+  ownerProfileIconUrl: string;
+  thumbnailUrl: string;
+  viewCount: number;
+  reportCount: number;
+  likesCount: number;
+  duration: string;
+  category: string;
+  categorySub: string;
+  categorySubCode: string;
+  recordType: string;
+  contentUrlList: string[];
+  poseIndicatorList: string[];
+  nodeId: string;
+  createdAt: string;
 }
 
 export interface V1GetVideoRequest {
@@ -60,7 +119,32 @@ export interface V1CreateVideoResponse {
   result: string;
   status: number;
   message: string;
-  data: v1Result | undefined;
+  data: V1CreateVideoResponse_Data | undefined;
+}
+
+export interface V1CreateVideoResponse_Data {
+  id: number;
+  email: string;
+  title: string;
+  subTitle: string;
+  description: string;
+  ownerName: string;
+  ownerNickName: string;
+  ownerChannelName: string;
+  ownerProfileIconUrl: string;
+  thumbnailUrl: string;
+  viewCount: number;
+  reportCount: number;
+  likesCount: number;
+  duration: string;
+  category: string;
+  categorySub: string;
+  categorySubCode: string;
+  recordType: string;
+  contentUrlList: string[];
+  poseIndicatorList: string[];
+  nodeId: string;
+  createdAt: string;
 }
 
 export interface V1CreateVideoRequest {
@@ -714,6 +798,10 @@ export interface VideoServiceClient {
   v1CreateVideo(request: V1CreateVideoRequest): Observable<V1CreateVideoResponse>;
 
   v1GetVideo(request: V1GetVideoRequest): Observable<V1GetVideoResponse>;
+
+  v1ListVideo(request: V1ListVideoRequest): Observable<V1ListVideoResponse>;
+
+  v1DeleteVideo(request: V1DeleteVideoRequest): Observable<V1DeleteVideoResponse>;
 }
 
 /**
@@ -742,11 +830,19 @@ export interface VideoServiceController {
   v1GetVideo(
     request: V1GetVideoRequest,
   ): Promise<V1GetVideoResponse> | Observable<V1GetVideoResponse> | V1GetVideoResponse;
+
+  v1ListVideo(
+    request: V1ListVideoRequest,
+  ): Promise<V1ListVideoResponse> | Observable<V1ListVideoResponse> | V1ListVideoResponse;
+
+  v1DeleteVideo(
+    request: V1DeleteVideoRequest,
+  ): Promise<V1DeleteVideoResponse> | Observable<V1DeleteVideoResponse> | V1DeleteVideoResponse;
 }
 
 export function VideoServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createVideo", "v1CreateVideo", "v1GetVideo"];
+    const grpcMethods: string[] = ["createVideo", "v1CreateVideo", "v1GetVideo", "v1ListVideo", "v1DeleteVideo"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("VideoService", method)(constructor.prototype[method], method, descriptor);
