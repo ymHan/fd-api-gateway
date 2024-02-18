@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, OnModuleInit, Post, Get, Req, Param, Query } from '@nestjs/common';
+import { Body, Controller, Inject, OnModuleInit, Post, Get, Param, Query, Delete } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import {
@@ -7,7 +7,7 @@ import {
   V1CreateVideoRequest,
   V1CreateVideoResponse,
   V1GetVideoRequest,
-  V1GetVideoResponse, V1ListVideoResponse,
+  V1GetVideoResponse,
 } from '@proto/backoffice.pb';
 import { Category, CategorySubEnum, CategorySubCodeEnum, RecordType } from '@root/models/enum';
 import { ApiConsumes, ApiTags, ApiBody, ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
@@ -77,11 +77,11 @@ export class VideoController implements OnModuleInit {
             type: 'string',
           },
         },
-        nodeId: { type: 'string'},
+        nodeId: { type: 'string' },
       },
     },
   })
-  public createVideo(@Req() req: Request, @Body() payload: V1CreateVideoRequest): Observable<V1CreateVideoResponse> {
+  public createVideo(@Body() payload: V1CreateVideoRequest): Observable<V1CreateVideoResponse> {
     return this.svc.v1CreateVideo(payload);
   }
 
@@ -92,7 +92,6 @@ export class VideoController implements OnModuleInit {
     type: 'string',
     required: true,
     description: 'video id',
-
   })
   public getVideo(@Param() params: V1GetVideoRequest): Observable<V1GetVideoResponse> {
     return this.svc.v1GetVideo(params);
@@ -128,12 +127,21 @@ export class VideoController implements OnModuleInit {
     @Query('page') page: number,
     @Query('limit') limit: number,
     @Query('sort') sort: string,
-    @Query('order') order: string): Observable<any> {
+    @Query('order') order: string,
+  ): Observable<any> {
     const payload = { page, limit, sort, order };
     return this.svc.v1ListVideo(payload);
   }
 
-  public delVideos(@Req() req: Request, @Body() payload: V1CreateVideoRequest): Observable<V1CreateVideoResponse> {
-    return this.svc.v1CreateVideo(payload);
+  @Delete('video/:id')
+  @ApiOperation({ summary: 'Delete videos', description: 'Delete videos' })
+  @ApiParam({
+    name: 'id',
+    description: 'video id',
+    required: true,
+    type: 'number',
+  })
+  public delVideos(@Param() params: any): Observable<any> {
+    return this.svc.v1DeleteVideo(params);
   }
 }
