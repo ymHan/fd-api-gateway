@@ -5,17 +5,25 @@ import {
   B_O__VENUE__SERVICE_NAME,
   B_O__MEMBER__SERVICE_NAME,
   B_O__SECTOR__SERVICE_NAME,
+  CATEGORY_SERVICE_NAME,
   BACKOFFICE_PACKAGE_NAME,
+  MWC_SERVICE_NAME,
+  VIDEO_SERVICE_NAME,
 } from '@proto/backoffice.pb';
 
 import { CustomerController } from './backoffice.customer.controller';
 import { VenueController } from './backoffice.venue.controller';
 import { SectorController } from './backoffice.sector.controller';
+import { CategoryController } from './backoffice.category.controller';
+import { MwcController } from './backoffice.mwc.controller';
+import { VideoController } from './backoffice.video.controller';
 
 import { CustomerService } from './backoffice.customer.service';
 import { VenueService } from './backoffice.venue.service';
 import { SectorService } from './backoffice.sector.service';
-
+import { CategoryService } from './backoffice.category.service';
+import { MwcService } from './backoffice.mwc.service';
+import { VideoService } from './backoffice.video.service';
 
 @Global()
 @Module({
@@ -25,7 +33,7 @@ import { SectorService } from './backoffice.sector.service';
         name: B_O__CUSTOMER__SERVICE_NAME,
         transport: Transport.GRPC,
         options: {
-          url: '0.0.0.0:50052',
+          url: '0.0.0.0:50054',
           package: BACKOFFICE_PACKAGE_NAME,
           protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
         },
@@ -34,7 +42,7 @@ import { SectorService } from './backoffice.sector.service';
         name: B_O__VENUE__SERVICE_NAME,
         transport: Transport.GRPC,
         options: {
-          url: '0.0.0.0:50052',
+          url: '0.0.0.0:50054',
           package: BACKOFFICE_PACKAGE_NAME,
           protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
         },
@@ -43,7 +51,7 @@ import { SectorService } from './backoffice.sector.service';
         name: B_O__SECTOR__SERVICE_NAME,
         transport: Transport.GRPC,
         options: {
-          url: '0.0.0.0:50052',
+          url: '0.0.0.0:50054',
           package: BACKOFFICE_PACKAGE_NAME,
           protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
         },
@@ -52,15 +60,42 @@ import { SectorService } from './backoffice.sector.service';
         name: B_O__MEMBER__SERVICE_NAME,
         transport: Transport.GRPC,
         options: {
-          url: '0.0.0.0:50052',
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
+      {
+        name: CATEGORY_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
+      {
+        name: MWC_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
+      {
+        name: VIDEO_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
           package: BACKOFFICE_PACKAGE_NAME,
           protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
         },
       },
     ]),
   ],
-  controllers: [CustomerController, VenueController, SectorController],
-  providers: [CustomerService, VenueService, VenueService, SectorService],
-  exports: [CustomerService, VenueService, VenueService, SectorService],
+  controllers: [CustomerController, VenueController, SectorController, CategoryController, MwcController, VideoController],
+  providers: [CustomerService, VenueService, SectorService, CategoryService, MwcService, VideoService],
+  exports: [CustomerService, VenueService, SectorService, CategoryService, MwcService, VideoService],
 })
 export class BackofficeModule {}

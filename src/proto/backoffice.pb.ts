@@ -1,8 +1,116 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
 import { Observable } from "rxjs";
+import { Empty } from "./google/protobuf/empty.pb";
 
 export const protobufPackage = "backoffice";
+
+/** 페이징 정보 */
+export interface Paging {
+  page: number;
+  size: number;
+  total: number;
+  sort: string;
+  order: string;
+}
+
+/** 기본 결과 메시지 */
+export interface defaultResult {
+  status: string;
+  message: string;
+}
+
+export interface V1GetVideoResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: v1Result | undefined;
+}
+
+export interface V1GetVideoRequest {
+  id: number;
+}
+
+export interface v1Result {
+  id: number;
+  email: string;
+  title: string;
+  subTitle: string;
+  description: string;
+  ownerName: string;
+  ownerNickName: string;
+  ownerChannelName: string;
+  ownerProfileIconUrl: string;
+  thumbnailUrl: string;
+  viewCount: number;
+  reportCount: number;
+  likesCount: number;
+  duration: string;
+  category: string;
+  categorySub: string;
+  categorySubCode: string;
+  recordType: string;
+  contentUrlList: string[];
+  poseIndicatorList: string[];
+  nodeId: string;
+  createdAt: string;
+}
+
+export interface V1CreateVideoResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: v1Result | undefined;
+}
+
+export interface V1CreateVideoRequest {
+  email: string;
+  title: string;
+  subTitle: string;
+  description: string;
+  ownerName: string;
+  ownerNickName: string;
+  ownerChannelName: string;
+  ownerProfileIconUrl: string;
+  thumbnailUrl: string;
+  duration: string;
+  category: string;
+  categorySub: string;
+  categorySubCode: string;
+  recordType: string;
+  contentUrlList: string[];
+  poseIndicatorList: string[];
+  nodeId: string;
+}
+
+export interface DefaultResult {
+  result: string;
+  status: number;
+  message: string;
+  data: DefaultResult_DATA[];
+}
+
+export interface DefaultResult_DATA {
+  result: boolean;
+}
+
+export interface CreateVideoRequest {
+  title: string;
+  subTitle: string;
+  description: string;
+  recordType: string;
+  fileList: string[];
+  indicatorList: string[];
+  nodeId: string;
+  thumbnail: string;
+  categoryId: string;
+  subCategoryId: string;
+  userId: string;
+}
+
+export interface CreateVideoResponse {
+  result: DefaultResult | undefined;
+}
 
 export interface MakeQRCodeResponse {
   status: number;
@@ -379,100 +487,279 @@ export interface CreateMemberResponse {
   error: string[];
 }
 
-export interface ItemCategory {
-  /** 카테고리명 */
-  name: string;
-  /** 카테고리 깊이 1: 최상위 */
-  depth: number;
-  /** 카테고리설명 */
-  description: string;
-}
-
-export interface CreateCategoryRequest {
-  /** 카테고리명 */
-  name: string;
-  /** 카테고리 깊이 1: 최상위 */
-  depth: number;
-  /** 카테고리설명 */
-  description: string;
-}
-
-export interface CreateCategoryResponse {
-  status: number;
-  error: string[];
-  result: CreateCategoryResponse_Result | undefined;
-}
-
-export interface CreateCategoryResponse_Result {
-  id: string;
-}
-
-export interface GetCategoryRequest {
-  /** 카테고리코드번호 */
-  id: string;
-}
-
-export interface GetCategoryResponse {
-  status: number;
-  result: GetCategoryResponse_Result | undefined;
-  error: string[];
-}
-
-export interface GetCategoryResponse_Result {
-  category: ItemCategory | undefined;
-}
-
-export interface ListCategoryRequest {
+/** 카테고리 목록 요청 */
+export interface ListCategoryReq {
   /** 페이지 번호 */
   page: number;
   /** 페이지 사이즈 */
-  pagesize: number;
+  limit: number;
   /** 정렬 - field 명 */
   sort: string;
   /** 정렬 방식 asc / desc */
   order: string;
 }
 
-export interface ListCategoryResponse {
-  status: number;
-  totalCount: number;
-  page: number;
-  lastPage: number;
-  result: ListCategoryResponse_Result | undefined;
-  error: string[];
-}
-
-export interface ListCategoryResponse_Result {
-  categories: ItemCategory[];
-}
-
-export interface UpdateCategoryRequest {
+/** 카테고리 삭제 요청 */
+export interface DeleteCategoryReq {
   /** 카테고리코드번호 */
   id: string;
+}
+
+/** 카테고리 삭제 응답 */
+export interface DeleteCategoryRes {
+  status: string;
+  message: string;
+}
+
+/** 서브 카테고리 삭제 요청 */
+export interface DeleteSubCategoryReq {
+  /** 카테고리코드번호 */
+  id: string;
+}
+
+/** 서브 카테고리 삭제 응답 */
+export interface DeleteSubCategoryRes {
+  status: string;
+  message: string;
+}
+
+/** 서브 카테고리 정보 수정 응답 */
+export interface UpdateSubCategoryRes {
+  status: string;
+  message: string;
+}
+
+/** 서브 카테고리 정보 수정 */
+export interface UpdateSubCategoryReq {
+  /** 카테고리 id */
+  id: number;
+  /** 상위 카테고리 코드 */
+  categoryId: number;
   /** 카테고리명 */
   name: string;
-  /** 카테고리 깊이 1: 최상위 */
-  depth: number;
+  /** 카테고리 코드 */
+  code: string;
   /** 카테고리설명 */
   description: string;
 }
 
-export interface UpdateCategoryResponse {
-  status: number;
-  error: string[];
+/** 카테고리 정보 수정 응답 */
+export interface UpdateCategoryRes {
+  status: string;
+  message: string;
 }
 
-export interface DeleteCategoryRequest {
+/** 카테고리 정보 수정 */
+export interface UpdateCategoryReq {
+  /** 카테고리 id */
+  id: number;
+  /** 카테고리명 */
+  name: string;
+  /** 카테고리 코드 */
+  code: string;
+  /** 카테고리설명 */
+  description: string;
+}
+
+/** 서브 카테고리 상세 응답 */
+export interface GetSubCategoryRes {
+  status: string;
+  message: string;
+  data: GetSubCategoryRes_Data | undefined;
+}
+
+export interface GetSubCategoryRes_Data {
+  subCategory?: CategorySubItem | undefined;
+}
+
+/** 카테고리 상세 응답 */
+export interface GetCategoryRes {
+  status: string;
+  message: string;
+  data: CategoryItem | undefined;
+}
+
+/** 서브 카테고리 목록 조회 */
+export interface ListSubCategoryReq {
+  /** 상위 카테고리 코드 */
+  categoryId: string;
+}
+
+/** 서브 카테고리 목록 응답 */
+export interface ListSubCategoryRes {
+  status: string;
+  message: string;
+  category: CategorySubItem[];
+  meta: Paging | undefined;
+}
+
+/** 카테고리 내용 */
+export interface CategoryItem {
   /** 카테고리코드번호 */
-  id: string;
+  id: number;
+  /** 카테고리명 */
+  name: string;
+  /** 카테고리 코드 */
+  code: string;
+  /** 카테고리설명 */
+  description: string;
 }
 
-export interface DeleteCategoryResponse {
-  status: number;
-  error: string[];
+/** 서브 카테고리 내용 */
+export interface CategorySubItem {
+  /** 카테고리코드번호 */
+  id: number;
+  /** 상위 카테고리 코드 */
+  categoryId: number;
+  /** 카테고리명 */
+  name: string;
+  /** 카테고리 코드 */
+  code: string;
+  /** 카테고리설명 */
+  description: string;
+}
+
+/** 서브 카테고리 등록 */
+export interface CreateSubCategoryReq {
+  /** 상위 카테고리 코드 */
+  categoryId: number;
+  /** 카테고리명 */
+  name: string;
+  /** 카테고리 코드 */
+  code: string;
+  /** 카테고리설명 */
+  description: string;
+}
+
+/** 카테고리 등록 */
+export interface CreateCategoryReq {
+  /** 카테고리명 */
+  name: string;
+  /** 카테고리 코드 */
+  code: string;
+  /** 카테고리설명 */
+  description: string;
+}
+
+/** 카테고리 등록 응답 */
+export interface CreateCategoryRes {
+  status: string;
+  message: string;
+}
+
+/** 카테고리 목록 응답 */
+export interface ListCategoryRes {
+  status: string;
+  message: string;
+  data: CategoryItem[];
+  meta: Paging | undefined;
+}
+
+/** 카테고리 상세 요청 */
+export interface GetCategoryReq {
+  /** 카테고리코드번호 */
+  id: number;
+}
+
+/** 서브 카테고리 상세 요청 */
+export interface GetSubCategoryReq {
+  /** 서브 카테고리 코드 번호 */
+  id: number;
+}
+
+export interface GetMwcRequest {
+  index: number;
+  filename: string;
+}
+
+export interface GetMwcResponse {
+  status: string;
+  message: string;
+  data: Mwc | undefined;
+}
+
+export interface Mwc {
+  index: number;
+  video: string;
+  thumbnail: string;
+  download: string;
+  link: string;
+}
+
+export interface ListMwcResponse {
+  status: string;
+  message: string;
+  data: Mwc[];
 }
 
 export const BACKOFFICE_PACKAGE_NAME = "backoffice";
+
+/**
+ * ******************************************************************************
+ * 비디오 관련 시작
+ * *******************************************************************************
+ */
+
+export interface VideoServiceClient {
+  createVideo(request: CreateVideoRequest): Observable<CreateVideoResponse>;
+
+  /**
+   * rpc GetVideo(GetVideoRequest) returns (GetVideoResponse) {} // 비디오 정보 입력
+   *  rpc ListVideo(ListVideoRequest) returns (ListVideoResponse) {} // 비디오 정보 입력
+   *  rpc UpdateVideo(UpdateVideoRequest) returns (UpdateVideoResponse) {} // 비디오 정보 입력
+   *  rpc DeleteVideo(DeleteVideoRequest) returns (DeleteVideoResponse) {} // 비디오 정보 입력
+   * 임시...
+   */
+
+  v1CreateVideo(request: V1CreateVideoRequest): Observable<V1CreateVideoResponse>;
+
+  v1GetVideo(request: V1GetVideoRequest): Observable<V1GetVideoResponse>;
+}
+
+/**
+ * ******************************************************************************
+ * 비디오 관련 시작
+ * *******************************************************************************
+ */
+
+export interface VideoServiceController {
+  createVideo(
+    request: CreateVideoRequest,
+  ): Promise<CreateVideoResponse> | Observable<CreateVideoResponse> | CreateVideoResponse;
+
+  /**
+   * rpc GetVideo(GetVideoRequest) returns (GetVideoResponse) {} // 비디오 정보 입력
+   *  rpc ListVideo(ListVideoRequest) returns (ListVideoResponse) {} // 비디오 정보 입력
+   *  rpc UpdateVideo(UpdateVideoRequest) returns (UpdateVideoResponse) {} // 비디오 정보 입력
+   *  rpc DeleteVideo(DeleteVideoRequest) returns (DeleteVideoResponse) {} // 비디오 정보 입력
+   * 임시...
+   */
+
+  v1CreateVideo(
+    request: V1CreateVideoRequest,
+  ): Promise<V1CreateVideoResponse> | Observable<V1CreateVideoResponse> | V1CreateVideoResponse;
+
+  v1GetVideo(
+    request: V1GetVideoRequest,
+  ): Promise<V1GetVideoResponse> | Observable<V1GetVideoResponse> | V1GetVideoResponse;
+}
+
+export function VideoServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["createVideo", "v1CreateVideo", "v1GetVideo"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("VideoService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("VideoService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const VIDEO_SERVICE_NAME = "VideoService";
 
 /**
  * ******************************************************************************
@@ -709,53 +996,143 @@ export function BO_Member_ServiceControllerMethods() {
 
 export const B_O__MEMBER__SERVICE_NAME = "BO_Member_Service";
 
-export interface CategoryClient {
-  createCategory(request: CreateCategoryRequest): Observable<CreateCategoryResponse>;
+/**
+ * ******************************************************************************
+ * 카테고리 관리 시작
+ * *******************************************************************************
+ */
 
-  getCategory(request: GetCategoryRequest): Observable<GetCategoryResponse>;
+export interface CategoryServiceClient {
+  createCategory(request: CreateCategoryReq): Observable<CreateCategoryRes>;
 
-  listCategory(request: ListCategoryRequest): Observable<ListCategoryResponse>;
+  createSubCategory(request: CreateSubCategoryReq): Observable<CreateCategoryRes>;
 
-  updateCategory(request: UpdateCategoryRequest): Observable<UpdateCategoryResponse>;
+  listCategory(request: ListCategoryReq): Observable<ListCategoryRes>;
 
-  deleteCategory(request: DeleteCategoryRequest): Observable<DeleteCategoryResponse>;
+  listSubCategory(request: ListSubCategoryReq): Observable<ListSubCategoryRes>;
+
+  getCategory(request: GetCategoryReq): Observable<GetCategoryRes>;
+
+  getSubCategory(request: GetSubCategoryReq): Observable<GetSubCategoryRes>;
+
+  updateCategory(request: UpdateCategoryReq): Observable<UpdateCategoryRes>;
+
+  updateSubCategory(request: UpdateSubCategoryReq): Observable<UpdateSubCategoryRes>;
+
+  deleteCategory(request: DeleteCategoryReq): Observable<DeleteCategoryRes>;
+
+  deleteSubCategory(request: DeleteSubCategoryReq): Observable<DeleteSubCategoryRes>;
 }
 
-export interface CategoryController {
+/**
+ * ******************************************************************************
+ * 카테고리 관리 시작
+ * *******************************************************************************
+ */
+
+export interface CategoryServiceController {
   createCategory(
-    request: CreateCategoryRequest,
-  ): Promise<CreateCategoryResponse> | Observable<CreateCategoryResponse> | CreateCategoryResponse;
+    request: CreateCategoryReq,
+  ): Promise<CreateCategoryRes> | Observable<CreateCategoryRes> | CreateCategoryRes;
 
-  getCategory(
-    request: GetCategoryRequest,
-  ): Promise<GetCategoryResponse> | Observable<GetCategoryResponse> | GetCategoryResponse;
+  createSubCategory(
+    request: CreateSubCategoryReq,
+  ): Promise<CreateCategoryRes> | Observable<CreateCategoryRes> | CreateCategoryRes;
 
-  listCategory(
-    request: ListCategoryRequest,
-  ): Promise<ListCategoryResponse> | Observable<ListCategoryResponse> | ListCategoryResponse;
+  listCategory(request: ListCategoryReq): Promise<ListCategoryRes> | Observable<ListCategoryRes> | ListCategoryRes;
+
+  listSubCategory(
+    request: ListSubCategoryReq,
+  ): Promise<ListSubCategoryRes> | Observable<ListSubCategoryRes> | ListSubCategoryRes;
+
+  getCategory(request: GetCategoryReq): Promise<GetCategoryRes> | Observable<GetCategoryRes> | GetCategoryRes;
+
+  getSubCategory(
+    request: GetSubCategoryReq,
+  ): Promise<GetSubCategoryRes> | Observable<GetSubCategoryRes> | GetSubCategoryRes;
 
   updateCategory(
-    request: UpdateCategoryRequest,
-  ): Promise<UpdateCategoryResponse> | Observable<UpdateCategoryResponse> | UpdateCategoryResponse;
+    request: UpdateCategoryReq,
+  ): Promise<UpdateCategoryRes> | Observable<UpdateCategoryRes> | UpdateCategoryRes;
+
+  updateSubCategory(
+    request: UpdateSubCategoryReq,
+  ): Promise<UpdateSubCategoryRes> | Observable<UpdateSubCategoryRes> | UpdateSubCategoryRes;
 
   deleteCategory(
-    request: DeleteCategoryRequest,
-  ): Promise<DeleteCategoryResponse> | Observable<DeleteCategoryResponse> | DeleteCategoryResponse;
+    request: DeleteCategoryReq,
+  ): Promise<DeleteCategoryRes> | Observable<DeleteCategoryRes> | DeleteCategoryRes;
+
+  deleteSubCategory(
+    request: DeleteSubCategoryReq,
+  ): Promise<DeleteSubCategoryRes> | Observable<DeleteSubCategoryRes> | DeleteSubCategoryRes;
 }
 
-export function CategoryControllerMethods() {
+export function CategoryServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createCategory", "getCategory", "listCategory", "updateCategory", "deleteCategory"];
+    const grpcMethods: string[] = [
+      "createCategory",
+      "createSubCategory",
+      "listCategory",
+      "listSubCategory",
+      "getCategory",
+      "getSubCategory",
+      "updateCategory",
+      "updateSubCategory",
+      "deleteCategory",
+      "deleteSubCategory",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("Category", method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod("CategoryService", method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("Category", method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod("CategoryService", method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const CATEGORY_SERVICE_NAME = "Category";
+export const CATEGORY_SERVICE_NAME = "CategoryService";
+
+/**
+ * ******************************************************************************
+ * MWC 용
+ * *******************************************************************************
+ */
+
+export interface MwcServiceClient {
+  listMwc(request: Empty): Observable<ListMwcResponse>;
+
+  getMwc(request: GetMwcRequest): Observable<GetMwcResponse>;
+}
+
+/**
+ * ******************************************************************************
+ * MWC 용
+ * *******************************************************************************
+ */
+
+export interface MwcServiceController {
+  listMwc(request: Empty): Promise<ListMwcResponse> | Observable<ListMwcResponse> | ListMwcResponse;
+
+  getMwc(request: GetMwcRequest): Promise<GetMwcResponse> | Observable<GetMwcResponse> | GetMwcResponse;
+}
+
+export function MwcServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["listMwc", "getMwc"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("MwcService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("MwcService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const MWC_SERVICE_NAME = "MwcService";

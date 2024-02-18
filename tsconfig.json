@@ -24,6 +24,7 @@
       "@config/*": ["./src/config/*"],
       "@tools/*": ["./src/tools/*"],
       "@models/*": ["./src/models/enum/*"],
+      "@dto/*": ["./src/models/dto/*"],
     }
   }
 }
