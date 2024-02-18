@@ -82,7 +82,6 @@ export class VideoController implements OnModuleInit {
     },
   })
   public createVideo(@Req() req: Request, @Body() payload: V1CreateVideoRequest): Observable<V1CreateVideoResponse> {
-    console.log(payload);
     return this.svc.v1CreateVideo(payload);
   }
 
