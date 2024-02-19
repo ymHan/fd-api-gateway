@@ -1,7 +1,7 @@
 import { Body, Controller, Inject, OnModuleInit, Post, Get, Query } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
-import { CreateCategoryReqDto, CreateSubCategoryReqDto } from '../models/dto/';
+import { CreateCategoryReqDto } from '../models/dto/';
 import {
   CategoryServiceClient,
   CATEGORY_SERVICE_NAME,

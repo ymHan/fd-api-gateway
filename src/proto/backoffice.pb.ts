@@ -776,6 +776,71 @@ export interface ListMwcResponse {
   data: Mwc[];
 }
 
+export interface ListVersionResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: ListVersionResponse_Data[];
+}
+
+export interface ListVersionResponse_Data {
+  id: number;
+  appName: string;
+  version: string;
+  description: string;
+  platform: string;
+  createAt: string;
+}
+
+export interface GetVersionResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: GetVersionResponse_Data | undefined;
+}
+
+export interface GetVersionResponse_Data {
+  id: number;
+  appName: string;
+  version: string;
+  description: string;
+  platform: string;
+  createdAt: string;
+}
+
+export interface GetVersionRequest {
+  id: number;
+}
+
+export interface AppVersionUpdateRequest {
+  id: number;
+  appName: string;
+  version: string;
+  description: string;
+  platform: string;
+  information: string;
+}
+
+export interface AppVersionUpdateResponse {
+  result: string;
+  status: number;
+  message: string;
+}
+
+export interface AppVersionCreateRequest {
+  appName: string;
+  version: string;
+  description: string;
+  platform: string;
+  information: string;
+}
+
+export interface AppVersionCreateResponse {
+  result: string;
+  status: number;
+  message: string;
+}
+
 export const BACKOFFICE_PACKAGE_NAME = "backoffice";
 
 /**
@@ -1232,3 +1297,71 @@ export function MwcServiceControllerMethods() {
 }
 
 export const MWC_SERVICE_NAME = "MwcService";
+
+/**
+ * ******************************************************************************
+ * app Versioning
+ * *******************************************************************************
+ */
+
+export interface AppVersionServiceClient {
+  listVersion(request: Empty): Observable<ListVersionResponse>;
+
+  getVersion(request: Empty): Observable<GetVersionResponse>;
+
+  createVersion(request: AppVersionCreateRequest): Observable<AppVersionCreateResponse>;
+
+  updateVersion(request: AppVersionUpdateRequest): Observable<AppVersionUpdateResponse>;
+
+  getAndroidVersion(request: Empty): Observable<GetVersionResponse>;
+
+  getIosVersion(request: Empty): Observable<GetVersionResponse>;
+}
+
+/**
+ * ******************************************************************************
+ * app Versioning
+ * *******************************************************************************
+ */
+
+export interface AppVersionServiceController {
+  listVersion(request: Empty): Promise<ListVersionResponse> | Observable<ListVersionResponse> | ListVersionResponse;
+
+  getVersion(request: Empty): Promise<GetVersionResponse> | Observable<GetVersionResponse> | GetVersionResponse;
+
+  createVersion(
+    request: AppVersionCreateRequest,
+  ): Promise<AppVersionCreateResponse> | Observable<AppVersionCreateResponse> | AppVersionCreateResponse;
+
+  updateVersion(
+    request: AppVersionUpdateRequest,
+  ): Promise<AppVersionUpdateResponse> | Observable<AppVersionUpdateResponse> | AppVersionUpdateResponse;
+
+  getAndroidVersion(request: Empty): Promise<GetVersionResponse> | Observable<GetVersionResponse> | GetVersionResponse;
+
+  getIosVersion(request: Empty): Promise<GetVersionResponse> | Observable<GetVersionResponse> | GetVersionResponse;
+}
+
+export function AppVersionServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = [
+      "listVersion",
+      "getVersion",
+      "createVersion",
+      "updateVersion",
+      "getAndroidVersion",
+      "getIosVersion",
+    ];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("AppVersionService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("AppVersionService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const APP_VERSION_SERVICE_NAME = "AppVersionService";

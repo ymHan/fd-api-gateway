@@ -5,6 +5,89 @@ import { Empty } from "./google/protobuf/empty.pb";
 
 export const protobufPackage = "fdist";
 
+export interface TogglePublishedRequest {
+  userId: string;
+  videoId: number;
+  isPublished: boolean;
+}
+
+export interface TogglePublishedResponse {
+  result: string;
+  status: number;
+  message: string;
+}
+
+export interface DeleteVideoRequest {
+  userId: string;
+  videoId: number;
+}
+
+export interface DeleteVideoResponse {
+  result: string;
+  status: number;
+  message: string;
+}
+
+export interface MyVideoExistsRequest {
+  userEmail: string;
+}
+
+export interface MyVideoExistsResponse {
+  result: string;
+  status: number;
+  message: string;
+}
+
+export interface MyVideoListResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: MyVideoListResponse_DATA[];
+  meta: MyVideoListResponse_Meta | undefined;
+}
+
+export interface MyVideoListResponse_DATA {
+  id: number;
+  email: string;
+  title: string;
+  subTitle: string;
+  description: string;
+  ownerName: string;
+  ownerNickName: string;
+  ownerChannelName: string;
+  ownerProfileIconUrl: string;
+  viewCount: number;
+  reportCount: number;
+  likesCount: number;
+  duration: string;
+  category: string;
+  categorySub: string;
+  categorySubCode: string;
+  recordType: string;
+  contentUrlList: string[];
+  poseIndicatorList: string[];
+  nodeId: string;
+  createdAt: string;
+  updatedAt: string;
+  thumbnailUrl: string;
+  isPublished: string;
+}
+
+export interface MyVideoListResponse_Meta {
+  page: number;
+  limit: number;
+  totalCount: number;
+  lastPage: number;
+}
+
+export interface MyVideoListRequest {
+  userEmail: string;
+  page: number;
+  limit: number;
+  sort: string;
+  order: string;
+}
+
 export interface GetLikeCheckResponse {
   result: string;
   status: number;
@@ -287,7 +370,166 @@ export interface ContentItem {
   streamingUrl: string;
 }
 
+export interface ExistsVideoRequest {
+  userEmail: string;
+}
+
+export interface ExistsVideoResponse {
+  result: string;
+  status: number;
+  message: string;
+}
+
+export interface UpdateVideoMetaInfoRequest {
+  userEmail: string;
+  videoId: number;
+  title: string;
+  subTitle: string;
+  description: string;
+}
+
+export interface UpdateVideoMetaInfoResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: UpdateVideoMetaInfoResponse_DATA | undefined;
+}
+
+export interface UpdateVideoMetaInfoResponse_DATA {
+  id: number;
+  email: string;
+  title: string;
+  subTitle: string;
+  description: string;
+  ownerName: string;
+  ownerNickName: string;
+  ownerChannelName: string;
+  ownerProfileIconUrl: string;
+  viewCount: number;
+  reportCount: number;
+  likesCount: number;
+  duration: string;
+  category: string;
+  categorySub: string;
+  categorySubCode: string;
+  recordType: string;
+  contentUrlList: string[];
+  poseIndicatorList: string[];
+  nodeId: string;
+  createdAt: string;
+  updatedAt: string;
+  thumbnailUrl: string;
+}
+
+export interface ExistsMwcResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: ExistsMwcResponse_DATA | undefined;
+}
+
+export interface ExistsMwcResponse_DATA {
+  id: number;
+  email: string;
+  title: string;
+  subTitle: string;
+  description: string;
+  ownerName: string;
+  ownerNickName: string;
+  ownerChannelName: string;
+  ownerProfileIconUrl: string;
+  viewCount: number;
+  reportCount: number;
+  likesCount: number;
+  duration: string;
+  category: string;
+  categorySub: string;
+  categorySubCode: string;
+  recordType: string;
+  contentUrlList: string[];
+  poseIndicatorList: string[];
+  nodeId: string;
+  createdAt: string;
+  updatedAt: string;
+  thumbnailUrl: string;
+}
+
+export interface ExistsMwcRequest {
+  fileName: string;
+}
+
+export interface AddMwcRequest {
+  userId: string;
+  fileName: string;
+}
+
+export interface AddMwcResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: AddMwcResponse_DATA | undefined;
+}
+
+export interface AddMwcResponse_DATA {
+  id: number;
+  email: string;
+  title: string;
+  subTitle: string;
+  description: string;
+  ownerName: string;
+  ownerNickName: string;
+  ownerChannelName: string;
+  ownerProfileIconUrl: string;
+  viewCount: number;
+  reportCount: number;
+  likesCount: number;
+  duration: string;
+  category: string;
+  categorySub: string;
+  categorySubCode: string;
+  recordType: string;
+  contentUrlList: string[];
+  poseIndicatorList: string[];
+  nodeId: string;
+  createdAt: string;
+  updatedAt: string;
+  thumbnailUrl: string;
+}
+
 export const FDIST_PACKAGE_NAME = "fdist";
+
+export interface VideoServiceClient {
+  togglePublished(request: TogglePublishedRequest): Observable<TogglePublishedResponse>;
+
+  deleteVideo(request: DeleteVideoRequest): Observable<DeleteVideoResponse>;
+}
+
+export interface VideoServiceController {
+  togglePublished(
+    request: TogglePublishedRequest,
+  ): Promise<TogglePublishedResponse> | Observable<TogglePublishedResponse> | TogglePublishedResponse;
+
+  deleteVideo(
+    request: DeleteVideoRequest,
+  ): Promise<DeleteVideoResponse> | Observable<DeleteVideoResponse> | DeleteVideoResponse;
+}
+
+export function VideoServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["togglePublished", "deleteVideo"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("VideoService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("VideoService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const VIDEO_SERVICE_NAME = "VideoService";
 
 export interface FDistServiceClient {
   getContent(request: GetContentRequest): Observable<GetContentResponse>;
@@ -317,6 +559,10 @@ export interface FDistServiceClient {
   getLikeCheck(request: GetLikeCheckRequest): Observable<GetLikeCheckResponse>;
 
   reportVideo(request: ReportVideoRequest): Observable<ReportVideoResponse>;
+
+  myVideoList(request: MyVideoListRequest): Observable<MyVideoListResponse>;
+
+  myVideoExists(request: MyVideoExistsRequest): Observable<MyVideoExistsResponse>;
 }
 
 export interface FDistServiceController {
@@ -369,6 +615,14 @@ export interface FDistServiceController {
   reportVideo(
     request: ReportVideoRequest,
   ): Promise<ReportVideoResponse> | Observable<ReportVideoResponse> | ReportVideoResponse;
+
+  myVideoList(
+    request: MyVideoListRequest,
+  ): Promise<MyVideoListResponse> | Observable<MyVideoListResponse> | MyVideoListResponse;
+
+  myVideoExists(
+    request: MyVideoExistsRequest,
+  ): Promise<MyVideoExistsResponse> | Observable<MyVideoExistsResponse> | MyVideoExistsResponse;
 }
 
 export function FDistServiceControllerMethods() {
@@ -388,6 +642,8 @@ export function FDistServiceControllerMethods() {
       "toggleLike",
       "getLikeCheck",
       "reportVideo",
+      "myVideoList",
+      "myVideoExists",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
@@ -402,3 +658,44 @@ export function FDistServiceControllerMethods() {
 }
 
 export const F_DIST_SERVICE_NAME = "FDistService";
+
+export interface MwcServiceClient {
+  addMwc(request: AddMwcRequest): Observable<AddMwcResponse>;
+
+  existsMwc(request: ExistsMwcRequest): Observable<ExistsMwcResponse>;
+
+  updateVideoMetaInfo(request: UpdateVideoMetaInfoRequest): Observable<UpdateVideoMetaInfoResponse>;
+
+  existsVideo(request: ExistsVideoRequest): Observable<ExistsVideoResponse>;
+}
+
+export interface MwcServiceController {
+  addMwc(request: AddMwcRequest): Promise<AddMwcResponse> | Observable<AddMwcResponse> | AddMwcResponse;
+
+  existsMwc(request: ExistsMwcRequest): Promise<ExistsMwcResponse> | Observable<ExistsMwcResponse> | ExistsMwcResponse;
+
+  updateVideoMetaInfo(
+    request: UpdateVideoMetaInfoRequest,
+  ): Promise<UpdateVideoMetaInfoResponse> | Observable<UpdateVideoMetaInfoResponse> | UpdateVideoMetaInfoResponse;
+
+  existsVideo(
+    request: ExistsVideoRequest,
+  ): Promise<ExistsVideoResponse> | Observable<ExistsVideoResponse> | ExistsVideoResponse;
+}
+
+export function MwcServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["addMwc", "existsMwc", "updateVideoMetaInfo", "existsVideo"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("MwcService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("MwcService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const MWC_SERVICE_NAME = "MwcService";

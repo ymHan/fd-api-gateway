@@ -10,7 +10,13 @@ import {
   ReportVideoResponse,
   ToggleLikeRequest,
   ReportVideoRequest,
-  GetCategoryResponse, GetRecordTypeResponse, GetVideoRecordTypeResponse, GetLikeCheckRequest, GetLikeCheckResponse,
+  GetCategoryResponse,
+  GetRecordTypeResponse,
+  GetVideoRecordTypeResponse,
+  GetLikeCheckRequest,
+  GetLikeCheckResponse,
+  MyVideoListRequest,
+  MyVideoListResponse, MyVideoExistsRequest, MyVideoExistsResponse,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from '@nestjs/swagger';
@@ -178,5 +184,53 @@ export class FDistController implements OnModuleInit {
     return this.svc.reportVideo(reportVideoRequest);
   }
 
+  @Get('/my')
+  @ApiOperation({ summary: '내 영상 목록' })
+  @ApiQuery({
+    name: 'userEmail',
+    description: '사용자 이메일',
+    type: 'string',
+  })
+  @ApiQuery({
+    name: 'page',
+    description: 'page',
+    type: 'number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'limit',
+    type: 'number',
+  })
+  @ApiQuery({
+    name: 'sort',
+    description: 'sort',
+    type: 'string',
+  })
+  @ApiQuery({
+    name: 'order',
+    description: 'order',
+    type: 'string',
+  })
+  public myVideoList(
+    @Query('userEmail') userEmail: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('sort') sort: string,
+    @Query('order') order: string,
+  ): Observable<MyVideoListResponse> {
+    const payload: MyVideoListRequest = { userEmail, page, limit, sort, order };
+    return this.svc.myVideoList(payload);
+  }
 
+  @Get('/my/exists')
+  @ApiOperation({ summary: '내 영상 존재 여부' })
+  @ApiQuery({
+    name: 'userEmail',
+    description: '사용자 이메일',
+    type: 'string',
+  })
+  public myVideoExists(@Query('userEmail') userEmail: string): Observable<MyVideoExistsResponse> {
+    const payload: MyVideoExistsRequest = { userEmail };
+    return this.svc.myVideoExists(payload);
+  }
 }
