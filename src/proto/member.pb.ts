@@ -188,19 +188,13 @@ export interface VerifyEmailResponse_DATA {
 }
 
 export interface LeaveMemberRequest {
-  email: string;
+  id: number;
 }
 
 export interface LeaveMemberResponse {
   result: string;
   status: number;
   message: string;
-  data: LeaveMemberResponse_DATA[];
-}
-
-export interface LeaveMemberResponse_DATA {
-  result?: boolean | undefined;
-  error?: string | undefined;
 }
 
 export interface User {

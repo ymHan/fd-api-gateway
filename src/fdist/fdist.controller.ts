@@ -10,7 +10,11 @@ import {
   ReportVideoResponse,
   ToggleLikeRequest,
   ReportVideoRequest,
-  GetCategoryResponse, GetRecordTypeResponse, GetVideoRecordTypeResponse, GetLikeCheckRequest, GetLikeCheckResponse,
+  GetCategoryResponse,
+  GetRecordTypeResponse,
+  GetVideoRecordTypeResponse,
+  GetLikeCheckRequest,
+  GetLikeCheckResponse,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from '@nestjs/swagger';
@@ -177,6 +181,4 @@ export class FDistController implements OnModuleInit {
   public reportVideo(@Body() reportVideoRequest: ReportVideoRequest): Observable<ReportVideoResponse> {
     return this.svc.reportVideo(reportVideoRequest);
   }
-
-
 }

@@ -42,4 +42,5 @@ export class MwcController implements OnModuleInit {
 
     return this.svc.getMwc(params);
   }
+
 }
