@@ -6,7 +6,7 @@ import {
   MwcServiceClient,
   VIDEO_SERVICE_NAME,
   VideoServiceClient,
-  UpdateVideoMetaInfoRequest
+  UpdateVideoMetaInfoRequest,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiOperation, ApiBody, ApiConsumes } from '@nestjs/swagger';
