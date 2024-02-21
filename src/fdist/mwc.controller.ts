@@ -11,7 +11,7 @@ import {
   DeleteVideoResponse,
   AddMwcRequest,
   AddMwcResponse,
-  UpdateVideoMetaInfoResponse,
+  UpdateVideoMetaInfoResponse, ExistsMwcRequest, ExistsMwcResponse,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiOperation, ApiBody, ApiConsumes } from '@nestjs/swagger';
@@ -139,7 +139,7 @@ export class MwcController implements OnModuleInit {
     schema: {
       type: 'object',
       properties: {
-        userId: {
+        userEmail: {
           type: 'string',
           description: '사용자 이메일',
         },
@@ -151,7 +151,7 @@ export class MwcController implements OnModuleInit {
     },
   })
   @ApiConsumes('application/x-www-form-urlencoded')
-  public existsMwc(@Body() payload: any): Observable<any> {
+  public existsMwc(@Body() payload: ExistsMwcRequest): Observable<ExistsMwcResponse> {
     return this.mwcSvc.existsMwc(payload);
   }
 }
