@@ -11,7 +11,7 @@ import {
   DeleteVideoResponse,
   AddMwcRequest,
   AddMwcResponse,
-  UpdateVideoMetaInfoResponse, ExistsMwcRequest, ExistsMwcResponse,
+  UpdateVideoMetaInfoResponse, ExistsMwcRequest, ExistsMwcResponse, TogglePublishedResponse, TogglePublishedRequest,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiOperation, ApiBody, ApiConsumes } from '@nestjs/swagger';
@@ -85,7 +85,7 @@ export class MwcController implements OnModuleInit {
     },
   })
   @ApiConsumes('application/x-www-form-urlencoded')
-  public togglePublished(@Body() payload: any): Observable<any> {
+  public togglePublished(@Body() payload: TogglePublishedRequest): Observable<TogglePublishedResponse> {
     return this.videoSvc.togglePublished(payload);
   }
 
