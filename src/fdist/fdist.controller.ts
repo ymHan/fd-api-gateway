@@ -16,7 +16,9 @@ import {
   GetLikeCheckRequest,
   GetLikeCheckResponse,
   MyVideoListRequest,
-  MyVideoListResponse, MyVideoExistsRequest, MyVideoExistsResponse,
+  MyVideoListResponse,
+  MyVideoExistsRequest,
+  MyVideoExistsResponse,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from '@nestjs/swagger';
