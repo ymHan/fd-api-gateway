@@ -3,7 +3,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { MwcServiceClient, MWC_SERVICE_NAME, VIDEO_SERVICE_NAME, VideoServiceClient } from '@proto/fdist.pb';
 
 @Injectable()
-export class MwcFDistService {
+export class MwcService {
   private videoSvc: VideoServiceClient;
   private mwcSvc: MwcServiceClient;
 

@@ -4,8 +4,8 @@ import { F_DIST_SERVICE_NAME, FDIST_PACKAGE_NAME, MWC_SERVICE_NAME, VIDEO_SERVIC
 
 import { FDistController } from './fdist.controller';
 import { FDistService } from './fdist.service';
-import { MwcFDistController } from './mwc-fdist.controller';
-import { MwcFDistService } from './mwc-fdist.service';
+import { MwcController } from './mwc.controller';
+import { MwcService } from './mwc.service';
 
 @Global()
 @Module({
@@ -40,8 +40,8 @@ import { MwcFDistService } from './mwc-fdist.service';
       },
     ]),
   ],
-  controllers: [FDistController, MwcFDistController],
-  providers: [FDistService,MwcFDistService],
-  exports: [FDistService, MwcFDistService],
+  controllers: [FDistController, MwcController],
+  providers: [FDistService,MwcService],
+  exports: [FDistService, MwcService],
 })
 export class FDistModule {}

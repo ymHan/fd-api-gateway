@@ -7,13 +7,18 @@ import {
   VIDEO_SERVICE_NAME,
   VideoServiceClient,
   UpdateVideoMetaInfoRequest,
+  DeleteVideoRequest,
+  DeleteVideoResponse,
+  AddMwcRequest,
+  AddMwcResponse,
+  UpdateVideoMetaInfoResponse,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiOperation, ApiBody, ApiConsumes } from '@nestjs/swagger';
 
 @ApiTags('FDist - MWC')
 @Controller({ path: 'mwc' })
-export class MwcFDistController implements OnModuleInit {
+export class MwcController implements OnModuleInit {
   private mwcSvc: MwcServiceClient;
   private videoSvc: VideoServiceClient;
 
@@ -46,7 +51,7 @@ export class MwcFDistController implements OnModuleInit {
           type: 'string',
           description: '영상 제목',
         },
-        subtitle: {
+        subTitle: {
           type: 'string',
           description: '영상 부 제목',
         },
@@ -58,7 +63,7 @@ export class MwcFDistController implements OnModuleInit {
     },
   })
   @ApiConsumes('application/x-www-form-urlencoded')
-  public updateVideoMetaInfo(@Body() payload: UpdateVideoMetaInfoRequest): Observable<any> {
+  public updateVideoMetaInfo(@Body() payload: UpdateVideoMetaInfoRequest): Observable<UpdateVideoMetaInfoResponse> {
     return this.mwcSvc.updateVideoMetaInfo(payload);
   }
 
@@ -102,7 +107,7 @@ export class MwcFDistController implements OnModuleInit {
     },
   })
   @ApiConsumes('application/x-www-form-urlencoded')
-  public deleteVideo(@Body() payload: any): Observable<any> {
+  public deleteVideo(@Body() payload: DeleteVideoRequest): Observable<DeleteVideoResponse> {
     return this.videoSvc.deleteVideo(payload);
   }
 
@@ -124,7 +129,7 @@ export class MwcFDistController implements OnModuleInit {
     },
   })
   @ApiConsumes('application/x-www-form-urlencoded')
-  public addMwc(@Body() payload: any): Observable<any> {
+  public addMwc(@Body() payload: AddMwcRequest): Observable<AddMwcResponse> {
     return this.mwcSvc.addMwc(payload);
   }
 
