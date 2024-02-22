@@ -1,12 +1,19 @@
-import { Controller, Inject, OnModuleInit, Get, Param, Query } from '@nestjs/common';
+import { Controller, Inject, OnModuleInit, Get, Param, Query, Res, UseInterceptors, HttpStatus } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
-import { MWC_SERVICE_NAME, MwcServiceClient, ListMwcResponse, GetMwcRequest, GetMwcResponse } from '@proto/backoffice.pb';
-import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { MWC_SERVICE_NAME, MwcServiceClient, ListMwcResponse, GetMwcResponse } from '@proto/backoffice.pb';
+import { ApiOperation, ApiParam, ApiQuery, ApiTags, ApiResponse, ApiProduces } from '@nestjs/swagger';
 
+import { CommonService } from '@root/common/common.service';
+import { Response } from 'express';
+import { LoggingInterceptor } from '@root/common/logging.interceptor';
+
+@UseInterceptors(LoggingInterceptor)
 @ApiTags('BackOffice - mwc')
 @Controller()
 export class MwcController implements OnModuleInit {
+  constructor(private readonly commonService: CommonService) {}
+
   private svc: MwcServiceClient;
 
   @Inject(MWC_SERVICE_NAME)
@@ -37,10 +44,31 @@ export class MwcController implements OnModuleInit {
     type: 'string',
   })
   public getMwc(@Param() params: any, @Query('filename') filename: string): Observable<GetMwcResponse> {
-    Object.assign(params, {filename});
+    Object.assign(params, { filename });
     params['index'] = parseInt(params['index'], 10);
 
     return this.svc.getMwc(params);
   }
 
+  @Get('mwc/:filename')
+  @ApiOperation({ summary: '파일 다운로드', description: '파일 다운로드' })
+  @ApiParam({
+    name: 'filename',
+    description: 'file name',
+    required: true,
+    type: 'string',
+  })
+  @ApiResponse({
+    schema: {
+      type: 'string',
+      format: 'binary',
+    },
+    status: HttpStatus.OK,
+  })
+  @ApiProduces('application/octet-stream')
+  public mp4Stream(@Res() response: Response, @Param('filename') filename: string) {
+    const file = this.commonService.mp4Stream(filename);
+    response.contentType('video/mp4')
+    response.send(file);
+  }
 }

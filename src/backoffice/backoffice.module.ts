@@ -27,6 +27,7 @@ import { CategoryService } from './backoffice.category.service';
 import { MwcService } from './backoffice.mwc.service';
 import { VideoService } from './backoffice.video.service';
 import { AppVersionService } from './backoffice.app.version.service';
+import { CommonService } from '@root/common/common.service';
 
 @Global()
 @Module({
@@ -103,11 +104,37 @@ import { AppVersionService } from './backoffice.app.version.service';
           package: BACKOFFICE_PACKAGE_NAME,
           protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
         },
-      }
+      },
     ]),
   ],
-  controllers: [CustomerController, VenueController, SectorController, CategoryController, MwcController, VideoController, AppVersionController],
-  providers: [CustomerService, VenueService, SectorService, CategoryService, MwcService, VideoService, AppVersionService],
-  exports: [CustomerService, VenueService, SectorService, CategoryService, MwcService, VideoService, AppVersionService],
+  controllers: [
+    CustomerController,
+    VenueController,
+    SectorController,
+    CategoryController,
+    MwcController,
+    VideoController,
+    AppVersionController,
+  ],
+  providers: [
+    CustomerService,
+    VenueService,
+    SectorService,
+    CategoryService,
+    MwcService,
+    VideoService,
+    AppVersionService,
+    CommonService,
+  ],
+  exports: [
+    CustomerService,
+    VenueService,
+    SectorService,
+    CategoryService,
+    MwcService,
+    VideoService,
+    AppVersionService,
+    CommonService,
+  ],
 })
 export class BackofficeModule {}
