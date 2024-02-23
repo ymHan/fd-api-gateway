@@ -245,6 +245,7 @@ export class FDistController implements OnModuleInit {
 
   async getCountryCode(req): Promise<string | null> {
     const ip = requestIp.getClientIp(req);
+    console.log(ip);
     if (!ip) {
       return null;
     }
