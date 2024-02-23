@@ -25,6 +25,7 @@ import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from 
 import { Request } from 'express';
 import * as requestIp from 'request-ip';
 import * as requestPromise from 'request-promise';
+import { RealIP } from 'nestjs-real-ip';
 
 @ApiTags('FDist - Video')
 @Controller({ path: 'video' })
@@ -98,11 +99,8 @@ export class FDistController implements OnModuleInit {
     type: 'number',
   })
   @Get('videos/:id')
-  public getVideoById(@Req() req: Request, @Param() params: GetVideoByIdRequest): Observable<any> {
-    this.getCountryCode(req).then((result) => {
-      console.log(req.ip);
-      console.log(result);
-    });
+  public getVideoById(@Req() req: Request, @Param() params: GetVideoByIdRequest, @RealIP() ip: string): Observable<any> {
+    console.log(ip);
 
     return this.svc.getVideoById(params);
   }
@@ -242,24 +240,5 @@ export class FDistController implements OnModuleInit {
   public myVideoExists(@Query('userEmail') userEmail: string): Observable<MyVideoExistsResponse> {
     const payload: MyVideoExistsRequest = { userEmail };
     return this.svc.myVideoExists(payload);
-  }
-
-  async getCountryCode(req): Promise<string | null> {
-    const ip = requestIp.getClientIp(req);
-    if (!ip) {
-      return null;
-    }
-
-    try {
-      const response = await requestPromise({
-        uri: `https://ipapi.co/${ip}/country/`,
-        json: true,
-      });
-
-      return response.country;
-    } catch (error) {
-      console.error('Error getting country code', error.message);
-      return null;
-    }
   }
 }
