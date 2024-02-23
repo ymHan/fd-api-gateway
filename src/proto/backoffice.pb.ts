@@ -751,6 +751,14 @@ export interface GetSubCategoryReq {
   id: number;
 }
 
+export interface FileDownloadRequest {
+  filename: string;
+}
+
+export interface FileDownloadResponse {
+  downloadUrl: string;
+}
+
 export interface GetMwcRequest {
   index: number;
   filename: string;
@@ -1267,6 +1275,8 @@ export interface MwcServiceClient {
   listMwc(request: Empty): Observable<ListMwcResponse>;
 
   getMwc(request: GetMwcRequest): Observable<GetMwcResponse>;
+
+  fileDownload(request: FileDownloadRequest): Observable<FileDownloadResponse>;
 }
 
 /**
@@ -1279,11 +1289,15 @@ export interface MwcServiceController {
   listMwc(request: Empty): Promise<ListMwcResponse> | Observable<ListMwcResponse> | ListMwcResponse;
 
   getMwc(request: GetMwcRequest): Promise<GetMwcResponse> | Observable<GetMwcResponse> | GetMwcResponse;
+
+  fileDownload(
+    request: FileDownloadRequest,
+  ): Promise<FileDownloadResponse> | Observable<FileDownloadResponse> | FileDownloadResponse;
 }
 
 export function MwcServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["listMwc", "getMwc"];
+    const grpcMethods: string[] = ["listMwc", "getMwc", "fileDownload"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("MwcService", method)(constructor.prototype[method], method, descriptor);
