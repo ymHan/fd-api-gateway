@@ -23,7 +23,6 @@ import {
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { Request } from 'express';
-import * as requestIp from 'request-ip';
 import * as requestPromise from 'request-promise';
 import { RealIP } from 'nestjs-real-ip';
 
