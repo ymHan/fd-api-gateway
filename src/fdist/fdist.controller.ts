@@ -22,7 +22,7 @@ import {
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from '@nestjs/swagger';
-
+import { Request } from 'express';
 import * as requestIp from 'request-ip';
 import * as requestPromise from 'request-promise';
 
@@ -100,6 +100,7 @@ export class FDistController implements OnModuleInit {
   @Get('videos/:id')
   public getVideoById(@Req() req: Request, @Param() params: GetVideoByIdRequest): Observable<any> {
     this.getCountryCode(req).then((result) => {
+      console.log(req.ip);
       console.log(result);
     });
 
