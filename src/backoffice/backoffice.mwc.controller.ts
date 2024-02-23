@@ -35,7 +35,7 @@ export class MwcController implements OnModuleInit {
     type: 'string',
   })
   public fileDownload(@Res({ passthrough: true }) res: Response, @Param('filename') filename: string): StreamableFile {
-    const filePath = `${process.env.MWC_FILE_DOWNLOAD_PATH}${this.getDates()}${filename}`;
+    const filePath = `${process.env.MWC_FILE_PATH_KR}${this.getDates()}${filename}`;
     const file = createReadStream(join(process.cwd(), filePath));
     res.set({
       'Content-Type': 'video/mp4',
