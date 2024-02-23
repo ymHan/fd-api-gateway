@@ -1,9 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     rawBody: true,
   });
 
@@ -18,6 +19,7 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, document);
 
   app.enableCors();
+  app.set('trust proxy', true);
 
   await app.listen(process.env.PORT);
 }
