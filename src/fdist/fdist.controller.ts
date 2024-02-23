@@ -1,4 +1,4 @@
-import { Controller, Inject, OnModuleInit, Get, Param, Query, Body, Post } from '@nestjs/common';
+import { Controller, Inject, OnModuleInit, Get, Param, Query, Body, Post, Req } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import {
@@ -18,10 +18,13 @@ import {
   MyVideoListRequest,
   MyVideoListResponse,
   MyVideoExistsRequest,
-  MyVideoExistsResponse,
+  MyVideoExistsResponse, GetVideoByIdResponse,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from '@nestjs/swagger';
+
+import * as requestIp from 'request-ip';
+import * as requestPromise from 'request-promise';
 
 @ApiTags('FDist - Video')
 @Controller({ path: 'video' })
@@ -95,7 +98,11 @@ export class FDistController implements OnModuleInit {
     type: 'number',
   })
   @Get('videos/:id')
-  public getVideoById(@Param() params: GetVideoByIdRequest): Observable<any> {
+  public getVideoById(@Req() req: Request, @Param() params: GetVideoByIdRequest): Observable<any> {
+    this.getCountryCode(req).then((result) => {
+      console.log(result);
+    });
+
     return this.svc.getVideoById(params);
   }
 
@@ -234,5 +241,24 @@ export class FDistController implements OnModuleInit {
   public myVideoExists(@Query('userEmail') userEmail: string): Observable<MyVideoExistsResponse> {
     const payload: MyVideoExistsRequest = { userEmail };
     return this.svc.myVideoExists(payload);
+  }
+
+  async getCountryCode(req): Promise<string | null> {
+    const ip = requestIp.getClientIp(req);
+    if (!ip) {
+      return null;
+    }
+
+    try {
+      const response = await requestPromise({
+        uri: `https://ipapi.co/${ip}/country/`,
+        json: true,
+      });
+
+      return response.country;
+    } catch (error) {
+      console.error('Error getting country code', error.message);
+      return null;
+    }
   }
 }
