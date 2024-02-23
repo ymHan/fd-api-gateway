@@ -25,7 +25,6 @@ import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from 
 
 import * as requestIp from 'request-ip';
 import * as requestPromise from 'request-promise';
-import axios from 'axios';
 
 @ApiTags('FDist - Video')
 @Controller({ path: 'video' })
@@ -245,11 +244,7 @@ export class FDistController implements OnModuleInit {
   }
 
   async getCountryCode(req): Promise<string | null> {
-    const ddd = await axios.get('https://geolocation-db/com/json/')
-      .then((response) => { console.log(response.data); });
-    console.log(ddd);
     const ip = requestIp.getClientIp(req);
-    console.log(ip);
     if (!ip) {
       return null;
     }
