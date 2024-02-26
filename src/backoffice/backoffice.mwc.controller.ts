@@ -1,10 +1,8 @@
-import { Controller, Inject, OnModuleInit, Get, Param, Res, Header } from '@nestjs/common';
+import { Controller, Inject, OnModuleInit, Get, Query, Param } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
-import { MWC_SERVICE_NAME, MwcServiceClient, ListMwcResponse } from '@proto/backoffice.pb';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
-import { createReadStream } from 'fs';
+import { MWC_SERVICE_NAME, MwcServiceClient, ListMwcResponse, AddHtmlResponse } from '@proto/backoffice.pb';
+import { ApiOperation, ApiTags, ApiQuery, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('BackOffice - mwc')
 @Controller()
@@ -24,32 +22,17 @@ export class MwcController implements OnModuleInit {
     return this.svc.listMwc({});
   }
 
-  @Get('mwc/download/:filename')
-  @Header('Content-type', 'video/mpeg')
-  @ApiOperation({ summary: '파일 다운로드', description: '파일 다운로드' })
-  @ApiParam({
-    name: 'filename',
-    description: 'file name',
-    required: false,
-    type: 'string',
-  })
-  public fileDownload(@Res() res: Response, @Param('filename') filename: string) {
-    const filePath = `${process.env.MWC_FILE_PATH_KR}/${this.getDates()}${filename}`;
-    res.setHeader('Content-Type','video/mp4')
-    //res.setHeader('Content-Diposition', `attachment; filename=${filename}`)
-    const fileStream = createReadStream(filePath)
-    fileStream.pipe(res);
+  @Get('mwc/html')
+  @ApiOperation({ summary: 'MWC HTML 추가 - 건들지 마시오.', description: '자동으로 제작 - 건들지 마시오.' })
+  @ApiQuery({ name: 'filename', required: true, type: String })
+  public addHtml(@Query('filename') filename: string): Observable<AddHtmlResponse> {
+    return this.svc.addHtml({ filename });
   }
 
-  private getDates() {
-    let months = '';
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    if (month < 10) {
-      months = `0${month}`;
-    }
-    const day = date.getDate();
-    return `${year}${months}${day}`;
+  @Get('mwc/:path')
+  @ApiOperation({ summary: 'MWC PATH 리스트', description: 'MWC PATH 목록' })
+  @ApiParam({ name: 'path', required: true, type: String })
+  public listMwcPath(@Param('path') path: string): Observable<ListMwcResponse> {
+    return this.svc.listMwcPath({ path });
   }
 }
