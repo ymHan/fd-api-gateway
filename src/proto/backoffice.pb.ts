@@ -751,12 +751,18 @@ export interface GetSubCategoryReq {
   id: number;
 }
 
-export interface FileDownloadRequest {
+export interface ListMwcRequest {
+  path: string;
+}
+
+export interface AddHtmlRequest {
   filename: string;
 }
 
-export interface FileDownloadResponse {
-  downloadUrl: string;
+export interface AddHtmlResponse {
+  result: string;
+  status: number;
+  message: string;
 }
 
 export interface GetMwcRequest {
@@ -1274,9 +1280,11 @@ export const CATEGORY_SERVICE_NAME = "CategoryService";
 export interface MwcServiceClient {
   listMwc(request: Empty): Observable<ListMwcResponse>;
 
+  listMwc2(request: ListMwcRequest): Observable<ListMwcResponse>;
+
   getMwc(request: GetMwcRequest): Observable<GetMwcResponse>;
 
-  fileDownload(request: FileDownloadRequest): Observable<FileDownloadResponse>;
+  addHtml(request: AddHtmlRequest): Observable<AddHtmlResponse>;
 }
 
 /**
@@ -1288,16 +1296,16 @@ export interface MwcServiceClient {
 export interface MwcServiceController {
   listMwc(request: Empty): Promise<ListMwcResponse> | Observable<ListMwcResponse> | ListMwcResponse;
 
+  listMwc2(request: ListMwcRequest): Promise<ListMwcResponse> | Observable<ListMwcResponse> | ListMwcResponse;
+
   getMwc(request: GetMwcRequest): Promise<GetMwcResponse> | Observable<GetMwcResponse> | GetMwcResponse;
 
-  fileDownload(
-    request: FileDownloadRequest,
-  ): Promise<FileDownloadResponse> | Observable<FileDownloadResponse> | FileDownloadResponse;
+  addHtml(request: AddHtmlRequest): Promise<AddHtmlResponse> | Observable<AddHtmlResponse> | AddHtmlResponse;
 }
 
 export function MwcServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["listMwc", "getMwc", "fileDownload"];
+    const grpcMethods: string[] = ["listMwc", "listMwc2", "getMwc", "addHtml"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("MwcService", method)(constructor.prototype[method], method, descriptor);

@@ -1,10 +1,8 @@
-import { Controller, Inject, OnModuleInit, Get, Param, Res, Header } from '@nestjs/common';
+import { Controller, Inject, OnModuleInit, Get, Query } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
-import { MWC_SERVICE_NAME, MwcServiceClient, ListMwcResponse } from '@proto/backoffice.pb';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
-import { createReadStream } from 'fs';
+import { MWC_SERVICE_NAME, MwcServiceClient, ListMwcResponse, AddHtmlResponse } from '@proto/backoffice.pb';
+import { ApiOperation, ApiTags, ApiQuery } from '@nestjs/swagger';
 
 @ApiTags('BackOffice - mwc')
 @Controller()
@@ -24,32 +22,10 @@ export class MwcController implements OnModuleInit {
     return this.svc.listMwc({});
   }
 
-  @Get('mwc/download/:filename')
-  @Header('Content-type', 'video/mpeg')
-  @ApiOperation({ summary: '파일 다운로드', description: '파일 다운로드' })
-  @ApiParam({
-    name: 'filename',
-    description: 'file name',
-    required: false,
-    type: 'string',
-  })
-  public fileDownload(@Res() res: Response, @Param('filename') filename: string) {
-    const filePath = `${process.env.MWC_FILE_PATH_KR}/${this.getDates()}${filename}`;
-    res.setHeader('Content-Type','video/mp4')
-    //res.setHeader('Content-Diposition', `attachment; filename=${filename}`)
-    const fileStream = createReadStream(filePath)
-    fileStream.pipe(res);
-  }
-
-  private getDates() {
-    let months = '';
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    if (month < 10) {
-      months = `0${month}`;
-    }
-    const day = date.getDate();
-    return `${year}${months}${day}`;
+  @Get('mwc/html')
+  @ApiOperation({ summary: 'MWC HTML 추가', description: 'MWC HTML 추가' })
+  @ApiQuery({ name: 'filename', required: true, type: String })
+  public addHtml(@Query('filename') filename: string): Observable<AddHtmlResponse> {
+    return this.svc.addHtml({ filename });
   }
 }
