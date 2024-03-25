@@ -11,8 +11,6 @@ import {
   Patch,
   Req,
   UnauthorizedException,
-  UseGuards,
-  Res
 } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
@@ -58,7 +56,6 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { AccountRoles } from '@root/models/enum';
-import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Account')
 @Controller('account')
