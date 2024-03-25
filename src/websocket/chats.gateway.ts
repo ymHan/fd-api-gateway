@@ -5,11 +5,16 @@ import {
   OnGatewayDisconnect,
   OnGatewayInit,
   WebSocketGateway,
+  SubscribeMessage,
+  WebSocketServer,
+  MessageBody,
 } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { Socket, Server } from 'socket.io';
+import { Observable } from 'rxjs';
 
-@WebSocketGateway({ namespace: 'chats' })
+@WebSocketGateway()
 export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() server: Server;
   private logger = new Logger('chat');
   constructor() {
     this.logger.log('constructor');
@@ -24,6 +29,15 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   afterInit() {
-    this.logger.log('Init');
+    // 바로 실행해야 하는 경우 여기다 때려 박는다...
+  }
+
+  @SubscribeMessage('makeRoom')
+  OnMakeRoom(@MessageBody() data, @ConnectedSocket() socket: Socket) {
+    const { venueId } = data
+    socket.join(`${socket.id}_room`);
+    return {
+      "msg": "방 만들어짐"
+    }
   }
 }
