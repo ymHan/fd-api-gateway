@@ -45,7 +45,7 @@ import {
   UpdatePushReceiveRequest,
   UpdateEmailReceiveResponse,
   UpdateEmailReceiveRequest,
-  SocialResponse,
+  SocialSignInRequest,
 } from '@proto/member.pb';
 import {
   ApiTags,
@@ -410,31 +410,8 @@ export class MemberController implements OnModuleInit {
     return this.svc.updateEmailReceive(payload);
   }
 
-  @Get('social/signin/:id')
-  public socialLogin(@Param('id') id: string, @Res() res) {
-    const redirectUrl = `/api/v1/account/social/${id}`;
-    return res.redirect(redirectUrl);
-  }
-
-  @Get('social/google')
-  @UseGuards(AuthGuard('google'))
-  async googleAuth() {}
-
-  @Get('social/apple')
-  @UseGuards(AuthGuard('apple'))
-  async appleAuth() {}
-
-  @Get('social/google/callback')
-  @UseGuards(AuthGuard('google'))
-  public socialGoogle(@Req() request: any): Observable<SocialResponse> {
-    const userInfo = request.user;
-    return this.svc.social(userInfo);
-  }
-
-  @Get('social/apple/callback')
-  @UseGuards(AuthGuard('apple'))
-  public socialApple(@Req() request: any): Observable<SocialResponse> {
-    const userInfo = request.user;
-    return this.svc.social(userInfo);
+  @Post('social/signin')
+  public socialSignin(@Req() req: Request, @Body() socialSignInRequest: SocialSignInRequest): Observable<SignInResponse> {
+    return this.svc.socialSignIn(socialSignInRequest);
   }
 }
