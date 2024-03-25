@@ -3,6 +3,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MemberController } from './member.controller';
 import { MEMBER_SERVICE_NAME, MEMBER_PACKAGE_NAME } from '../proto/member.pb';
 import { MemberService } from './member.service';
+import { GoogleStrategy } from './strategy/google.strategy';
+import { AppleStrategy } from './strategy/apple.strategy';
 
 @Global()
 @Module({
@@ -20,7 +22,7 @@ import { MemberService } from './member.service';
     ]),
   ],
   controllers: [MemberController],
-  providers: [MemberService],
+  providers: [MemberService, GoogleStrategy, AppleStrategy],
   exports: [MemberService],
 })
 export class MemberModule {}

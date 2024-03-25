@@ -11,6 +11,8 @@ import {
   Patch,
   Req,
   UnauthorizedException,
+  UseGuards,
+  Res
 } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
@@ -43,6 +45,7 @@ import {
   UpdatePushReceiveRequest,
   UpdateEmailReceiveResponse,
   UpdateEmailReceiveRequest,
+  SocialResponse,
 } from '@proto/member.pb';
 import {
   ApiTags,
@@ -55,6 +58,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { AccountRoles } from '@root/models/enum';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Account')
 @Controller('account')
@@ -404,5 +408,33 @@ export class MemberController implements OnModuleInit {
   ): Observable<UpdateEmailReceiveResponse> {
     const payload: UpdateEmailReceiveRequest = { id, emailreceive };
     return this.svc.updateEmailReceive(payload);
+  }
+
+  @Get('social/signin/:id')
+  public socialLogin(@Param('id') id: string, @Res() res) {
+    const redirectUrl = `/api/v1/account/social/${id}`;
+    return res.redirect(redirectUrl);
+  }
+
+  @Get('social/google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {}
+
+  @Get('social/apple')
+  @UseGuards(AuthGuard('apple'))
+  async appleAuth() {}
+
+  @Get('social/google/callback')
+  @UseGuards(AuthGuard('google'))
+  public socialGoogle(@Req() request: any): Observable<SocialResponse> {
+    const userInfo = request.user;
+    return this.svc.social(userInfo);
+  }
+
+  @Get('social/apple/callback')
+  @UseGuards(AuthGuard('apple'))
+  public socialApple(@Req() request: any): Observable<SocialResponse> {
+    const userInfo = request.user;
+    return this.svc.social(userInfo);
   }
 }
