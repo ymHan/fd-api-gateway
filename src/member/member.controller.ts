@@ -55,7 +55,7 @@ import {
   ApiCreatedResponse,
   ApiQuery,
 } from '@nestjs/swagger';
-import { AccountRoles } from '@root/models/enum';
+import { AccountRoles, SocialProvider } from '@root/models/enum';
 
 @ApiTags('Account')
 @Controller('account')
@@ -407,6 +407,54 @@ export class MemberController implements OnModuleInit {
     return this.svc.updateEmailReceive(payload);
   }
 
+  @ApiOperation({ summary: '소셜로그인', description: '소셜로그인' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          description: '사용자 계정 (이메일주소)',
+        },
+        name: {
+          type: 'string',
+          description: '이름',
+        },
+        provider: {
+          type: 'string',
+          enum: [SocialProvider.APPLE, SocialProvider.GOOGLE],
+          description: '간편로그인 제공처(apple or google)',
+        },
+        providerId: {
+          type: 'string',
+          description: 'provider에서 제공하는 아이디',
+        },
+        pushreceive: {
+          type: 'boolean',
+          description: '푸시알림 수신여부',
+          default: true,
+        },
+        emailreceive: {
+          type: 'boolean',
+          description: '이메일 수신여부',
+          default: true,
+        },
+        usertype: {
+          type: 'string',
+          enum: [
+            AccountRoles.ADMIN,
+            AccountRoles.SUPERVISOR,
+            AccountRoles.USER,
+            AccountRoles.OPERATOR,
+            AccountRoles.MODERATOR,
+            AccountRoles.MANAGER,
+            AccountRoles.MEMBER,
+          ],
+          description: '가입자 종류 및 권한',
+        },
+      },
+    },
+  })
   @Post('social/signin')
   public socialSignin(@Req() req: Request, @Body() socialSignInRequest: SocialSignInRequest): Observable<SignInResponse> {
     return this.svc.socialSignIn(socialSignInRequest);
