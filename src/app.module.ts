@@ -5,7 +5,7 @@ import { MemberModule } from './member/member.module';
 import { BackofficeModule } from './backoffice/backoffice.module';
 import { FDtionModule } from '@root/fdtion/fdtion.module';
 import { FDistModule } from '@root/fdist/fdist.module';
-import { ChatsGateway } from '@root/websocket/chats.gateway'
+import { WebsocketModule } from '@root/websocket/websokcet.module';
 import { RouterModule } from '@nestjs/core';
 
 
@@ -19,7 +19,7 @@ import { RouterModule } from '@nestjs/core';
     BackofficeModule,
     FDtionModule,
     FDistModule,
-    ChatsGateway,
+    WebsocketModule,
     RouterModule.register([
       {
         path: 'v1',

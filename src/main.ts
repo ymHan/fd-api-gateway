@@ -21,6 +21,6 @@ async function bootstrap() {
   app.enableCors();
   app.set('trust proxy', true);
 
-  await app.listen(process.env.PORT);
+  await app.listen(process.env.API_PORT);
 }
 bootstrap();
