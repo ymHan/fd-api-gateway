@@ -346,6 +346,16 @@ export interface ValidateResponse {
   data: ValidateResult[];
 }
 
+export interface SocialSignInRequest {
+  email: string;
+  name: string;
+  provider: string;
+  providerId: string;
+  pushreceive: boolean;
+  emailreceive: boolean;
+  usertype: string;
+}
+
 export const MEMBER_PACKAGE_NAME = "member";
 
 export interface MemberServiceClient {
@@ -388,6 +398,8 @@ export interface MemberServiceClient {
   updateEmailReceive(request: UpdateEmailReceiveRequest): Observable<UpdateEmailReceiveResponse>;
 
   updateNickname(request: UpdateNicknameRequest): Observable<UpdateNicknameResponse>;
+
+  socialSignIn(request: SocialSignInRequest): Observable<SignInResponse>;
 }
 
 export interface MemberServiceController {
@@ -459,6 +471,8 @@ export interface MemberServiceController {
   updateNickname(
     request: UpdateNicknameRequest,
   ): Promise<UpdateNicknameResponse> | Observable<UpdateNicknameResponse> | UpdateNicknameResponse;
+
+  socialSignIn(request: SocialSignInRequest): Promise<SignInResponse> | Observable<SignInResponse> | SignInResponse;
 }
 
 export function MemberServiceControllerMethods() {
@@ -483,6 +497,7 @@ export function MemberServiceControllerMethods() {
       "updatePushReceive",
       "updateEmailReceive",
       "updateNickname",
+      "socialSignIn",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

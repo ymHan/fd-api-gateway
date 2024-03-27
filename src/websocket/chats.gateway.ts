@@ -11,7 +11,6 @@ import {
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { RoomService } from './room.service';
-import { ListRoomDto } from './list-room.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @WebSocketGateway()
@@ -22,14 +21,15 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   constructor(private readonly roomService: RoomService) {}
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
+    this.logger.log(`Login`, socket.id);
     const { roomId } = socket.data;
-    if ( roomId !== 'lobby' && !this.server.sockets.adapter.rooms.get(roomId)) {
+    if (roomId !== 'lobby' && !this.server.sockets.adapter.rooms.get(roomId)) {
       this.roomService.deleteRoom(roomId);
     }
   }
 
   handleConnection(@ConnectedSocket() socket: Socket) {
-    socket.leave(socket.id)
+    socket.leave(socket.id);
     socket.data.roomId = 'lobby';
     socket.join('lobby');
   }
@@ -40,10 +40,10 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   @SubscribeMessage('makeRoom') //4dition
   makeRoom(@MessageBody() data, @ConnectedSocket() socket: Socket) {
-    const { venueId } = data
+    const { venueId } = data;
     const roomId = venueId + '::' + socket.id;
-    if ((socket.data.roomId !== 'lobby') && this.server.sockets.adapter.rooms.get(socket.data.roomId).size) {
-      this.roomService.deleteRoom(socket.data.roomId)
+    if (socket.data.roomId !== 'lobby' && this.server.sockets.adapter.rooms.get(socket.data.roomId).size) {
+      this.roomService.deleteRoom(socket.data.roomId);
     }
 
     this.roomService.makeRoom(socket, roomId);
@@ -52,14 +52,16 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       result: 'ok',
       status: 'success',
       message: 'Shooting is ready',
-      data: [{
-        roomId,
-      }]
+      data: [
+        {
+          roomId,
+        },
+      ],
     });
 
     return {
-      roomId: socket.data.roomId
-    }
+      roomId: socket.data.roomId,
+    };
   }
 
   @SubscribeMessage('joinRoom') //4dist
@@ -67,7 +69,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const { venueId, userEmail } = data;
     const { roomId, hostId } = this.roomService.findRoom(venueId);
 
-    if (socket.rooms.has(roomId)) { return; }
+    if (socket.rooms.has(roomId)) {
+      return;
+    }
 
     if (socket.data.roomId !== 'lobby' && this.server.sockets.adapter.rooms.get(socket.data.roomId).size) {
       this.roomService.deleteRoom(socket.data.roomId);
@@ -77,10 +81,12 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       result: 'ok',
       status: 'success',
       message: 'Shooting is ready',
-      data: [{
-        roomId,
-        hostId,
-      }]
+      data: [
+        {
+          roomId,
+          hostId,
+        },
+      ],
     });
   }
 
@@ -91,7 +97,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       task_id: uuidv4(),
       record_id: uuidv4(),
       command,
-      upload_url: 'http://file.4dist.com/oss'
-    })
+      upload_url: 'http://file.4dist.com/oss',
+    });
   }
 }

@@ -11,7 +11,7 @@ export class RoomService {
         roomId: 'lobby',
         hostId: null,
         userList: [],
-      }
+      },
     ];
   }
 
@@ -19,7 +19,7 @@ export class RoomService {
     this.roomList.push({
       roomId,
       hostId: client.id,
-      userList: []
+      userList: [],
     });
     client.data.roomId = roomId;
     client.rooms.clear();
@@ -39,22 +39,21 @@ export class RoomService {
     client.join('lobby');
   }
 
-
   findRoom(venueId: string): any {
     const condition = new RegExp(venueId);
     const result = this.roomList.filter((el) => {
-      return condition.test(el.roomId)
+      return condition.test(el.roomId);
     });
     return result[0];
   }
 
   findIndex(roomId: string): number {
-    return this.roomList.findIndex(obj => {
+    return this.roomList.findIndex((obj) => {
       obj.roomId === roomId;
     });
-   }
+  }
 
-   deleteRoom(roomId: string) {
+  deleteRoom(roomId: string) {
     this.roomList.splice(this.findIndex(roomId), 1);
   }
 

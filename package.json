@@ -1,3 +1,4 @@
+
 {
   "name": "fd-nestjs-api-gateway",
   "version": "1.0.0",
@@ -27,8 +28,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@grpc/grpc-js": "^1.10.3",
-    "@grpc/proto-loader": "^0.7.10",
+    "@grpc/grpc-js": "^1.10.4",
+    "@grpc/proto-loader": "^0.7.11",
     "@nestjs/cache-manager": "^2.2.2",
     "@nestjs/common": "^10.3.5",
     "@nestjs/config": "^3.2.1",
@@ -45,7 +46,6 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "ioredis": "^5.3.2",
-    "kafkajs": "^2.2.4",
     "nestjs-real-ip": "^3.0.1",
     "redis": "^4.6.13",
     "reflect-metadata": "^0.2.1",
@@ -79,7 +79,7 @@
     "ts-jest": "^29.1.2",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "ts-proto": "^1.169.1",
+    "ts-proto": "^1.170.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.3"
   },
