@@ -149,6 +149,7 @@ export class MemberController implements OnModuleInit {
         result: 'ok',
         status: 200,
         message: 'OK',
+        signType: 'email',
         data: [
           {
             id: 1,
