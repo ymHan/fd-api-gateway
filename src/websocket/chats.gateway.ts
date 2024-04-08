@@ -86,7 +86,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const roomExists = this.roomService.findRoom(nodeId);
     // 룸이 존재하지 않는다면,
     if (!roomExists) {
-      socket.emit('get-message', {
+      socket.emit('get-message::joinRoom', {
         result: 'ok',
         status: 'fail',
         message: 'Failed to join room. Room is not exist',
@@ -100,7 +100,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       const roomReady = roomExists.roomStatus;
       // 룸이 촬영 준비가 되지 않았다면,
       if (roomReady !== 'ready') {
-        socket.emit('get-message', {
+        socket.emit('get-message::joinRoom', {
           result: 'ok',
           status: 'fail',
           message: 'Failed to join room. Shooting is not ready',
@@ -116,7 +116,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         this.roomService.joinRoom(socket, { nodeId, userEmail, roomId });
         this.roomService.addUserList(roomId, userEmail);
 
-        socket.emit('get-message', {
+        socket.emit('get-message::joinRoom', {
           result: 'ok',
           status: 'success',
           message: 'Joined room. Shooting is ready',
@@ -134,7 +134,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   @SubscribeMessage('checkShooting')
   checkShooting(@ConnectedSocket() socket: Socket) {
     if (socket.data.roomId === 'lobby') {
-      socket.emit('get-message', {
+      socket.emit('get-message::checkShooting', {
         result: 'ok',
         status: 'fail',
         message: 'Failed to check shooting. You are not in the room',
@@ -159,7 +159,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       };
     }
 
-    socket.emit('get-message', result);
+    socket.emit('get-message::checkShooting', result);
   }
 
   @SubscribeMessage('shooting')
@@ -168,7 +168,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const roomId = `${nodeId}::${hostId}`;
 
     if (socket.data.roomId !== roomId) {
-      socket.emit('get-message', {
+      socket.emit('get-message::shooting', {
         result: 'ok',
         status: 'fail',
         message: 'Failed to shoot. You are not in the room',
@@ -185,7 +185,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       ownerEmail: userEmail,
     };
 
-    socket.except(hostId).emit('cmd-message', {
+    socket.except(hostId).emit('cmd-message::shooting', {
       task_id: taskId,
       record_id: tempId,
       command,
@@ -201,7 +201,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   ackMessage(@MessageBody() data, @ConnectedSocket() socket: Socket) {
     const { task_id, record_id, command, status } = data;
 
-    socket.to(socket.data.roomId).emit('get-message', {
+    socket.to(socket.data.roomId).emit('get-message::shooting', {
       task_id,
       record_id,
       command,
