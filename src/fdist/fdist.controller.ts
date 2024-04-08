@@ -69,6 +69,7 @@ export class FDistController implements OnModuleInit {
       },
     },
   })
+  @ApiConsumes('application/x-www-form-urlencoded')
   @Post('shooting')
   public addTmpVideo(@Body() addTmpVideoRequest: addTmpVideoRequest): Observable<addTmpVideoResponse> {
     return this.videoService.shootingVideo(addTmpVideoRequest);
