@@ -5,6 +5,17 @@ import { Empty } from "./google/protobuf/empty.pb";
 
 export const protobufPackage = "fdist";
 
+export interface addTmpVideoRequest {
+  tempId: string;
+  ownerEmail: string;
+  nodeId: string;
+}
+
+export interface addTmpVideoResponse {
+  id: number;
+  tempId: string;
+}
+
 export interface TogglePublishedRequest {
   userId: string;
   videoId: number;
@@ -76,6 +87,7 @@ export interface MyVideoListResponse_DATA {
   updatedAt: string;
   thumbnailUrl: string;
   isPublished: string;
+  channelList: string[];
 }
 
 export interface MyVideoListResponse_Meta {
@@ -147,6 +159,7 @@ export interface GetVideoRecordTypeResponse_DATA {
   createdAt: string;
   updatedAt: string;
   thumbnailUrl: string;
+  channelList: string[];
 }
 
 export interface GetVideoRecordTypeResponse_Meta {
@@ -268,6 +281,7 @@ export interface IdVideo {
   updatedAt: string;
   thumbnailUrl: string;
   isPublished: string;
+  channelList: string[];
 }
 
 export interface Videos {
@@ -294,6 +308,7 @@ export interface Videos {
   createdAt: string;
   updatedAt: string;
   thumbnailUrl: string;
+  channelList: string[];
 }
 
 export interface GetVideoByIdResponse {
@@ -435,6 +450,7 @@ export interface UpdateVideoMetaInfoResponse_DATA {
   createdAt: string;
   updatedAt: string;
   thumbnailUrl: string;
+  channelList: string[];
 }
 
 export interface ExistsMwcResponse {
@@ -468,6 +484,7 @@ export interface ExistsMwcResponse_DATA {
   createdAt: string;
   updatedAt: string;
   thumbnailUrl: string;
+  channelList: string[];
 }
 
 export interface ExistsMwcRequest {
@@ -511,6 +528,7 @@ export interface AddMwcResponse_DATA {
   createdAt: string;
   updatedAt: string;
   thumbnailUrl: string;
+  channelList: string[];
 }
 
 export const FDIST_PACKAGE_NAME = "fdist";
@@ -519,6 +537,8 @@ export interface VideoServiceClient {
   togglePublished(request: TogglePublishedRequest): Observable<TogglePublishedResponse>;
 
   deleteVideo(request: DeleteVideoRequest): Observable<DeleteVideoResponse>;
+
+  shootingVideo(request: addTmpVideoRequest): Observable<addTmpVideoResponse>;
 }
 
 export interface VideoServiceController {
@@ -529,11 +549,15 @@ export interface VideoServiceController {
   deleteVideo(
     request: DeleteVideoRequest,
   ): Promise<DeleteVideoResponse> | Observable<DeleteVideoResponse> | DeleteVideoResponse;
+
+  shootingVideo(
+    request: addTmpVideoRequest,
+  ): Promise<addTmpVideoResponse> | Observable<addTmpVideoResponse> | addTmpVideoResponse;
 }
 
 export function VideoServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["togglePublished", "deleteVideo"];
+    const grpcMethods: string[] = ["togglePublished", "deleteVideo", "shootingVideo"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("VideoService", method)(constructor.prototype[method], method, descriptor);

@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import {
   ConnectedSocket,
   OnGatewayConnection,
@@ -12,16 +12,26 @@ import {
 import { Socket, Server } from 'socket.io';
 import { RoomService } from './room.service';
 import { v4 as uuidv4 } from 'uuid';
+import { VIDEO_SERVICE_NAME, VideoServiceClient, addTmpVideoRequest } from '@proto/fdist.pb';
+import { ClientGrpc } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 
 @WebSocketGateway()
 export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
-  private logger = new Logger('chat');
+  private svc: VideoServiceClient;
+
+  @Inject(VIDEO_SERVICE_NAME)
+  private readonly client: ClientGrpc;
+
+  onModuleInit() {
+    this.svc = this.client.getService<VideoServiceClient>(VIDEO_SERVICE_NAME);
+  }
+
   constructor(private readonly roomService: RoomService) {}
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
-    this.logger.log(`Login`, socket.id);
     const { roomId } = socket.data;
     if (roomId !== 'lobby' && !this.server.sockets.adapter.rooms.get(roomId)) {
       this.roomService.deleteRoom(roomId);
@@ -32,6 +42,12 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     socket.leave(socket.id);
     socket.data.roomId = 'lobby';
     socket.join('lobby');
+    socket.emit('get-message', {
+      result: 'ok',
+      status: 'success',
+      message: `Your Socket ID's ${socket.id}`,
+      data: [{ socket: socket.id }],
+    });
   }
 
   afterInit() {
@@ -40,8 +56,8 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   @SubscribeMessage('makeRoom') //4dition
   makeRoom(@MessageBody() data, @ConnectedSocket() socket: Socket) {
-    const { venueId } = data;
-    const roomId = venueId + '::' + socket.id;
+    const { nodeId } = data;
+    const roomId = `${nodeId}::${socket.id}`;
     if (socket.data.roomId !== 'lobby' && this.server.sockets.adapter.rooms.get(socket.data.roomId).size) {
       this.roomService.deleteRoom(socket.data.roomId);
     }
@@ -66,38 +82,166 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   @SubscribeMessage('joinRoom') //4dist
   joinRoom(@MessageBody() data, @ConnectedSocket() socket: Socket) {
-    const { venueId, userEmail } = data;
-    const { roomId, hostId } = this.roomService.findRoom(venueId);
+    const { nodeId, userEmail } = data;
+    const roomExists = this.roomService.findRoom(nodeId);
+    // 룸이 존재하지 않는다면,
+    if (!roomExists) {
+      socket.emit('get-message', {
+        result: 'ok',
+        status: 'fail',
+        message: 'Failed to join room. Room is not exist',
+      });
+    } else {
+      // 이미 접속해 있는 경우 재접속 차단
+      if (socket.rooms.has(roomExists.roomId)) {
+        return;
+      }
 
-    if (socket.rooms.has(roomId)) {
-      return;
+      const roomReady = roomExists.roomStatus;
+      // 룸이 촬영 준비가 되지 않았다면,
+      if (roomReady !== 'ready') {
+        socket.emit('get-message', {
+          result: 'ok',
+          status: 'fail',
+          message: 'Failed to join room. Shooting is not ready',
+        });
+      }
+
+      if (roomExists && roomReady === 'ready') {
+        const { roomId, hostId } = roomExists;
+
+        if (socket.data.roomId !== 'lobby' && this.server.sockets.adapter.rooms.get(socket.data.roomId).size) {
+          this.roomService.deleteRoom(socket.data.roomId);
+        }
+        this.roomService.joinRoom(socket, { nodeId, userEmail, roomId });
+        this.roomService.addUserList(roomId, userEmail);
+
+        socket.emit('get-message', {
+          result: 'ok',
+          status: 'success',
+          message: 'Joined room. Shooting is ready',
+          data: [
+            {
+              roomId,
+              hostId,
+            },
+          ],
+        });
+      }
+    }
+  }
+
+  @SubscribeMessage('checkShooting')
+  checkShooting(@ConnectedSocket() socket: Socket) {
+    if (socket.data.roomId === 'lobby') {
+      socket.emit('get-message', {
+        result: 'ok',
+        status: 'fail',
+        message: 'Failed to check shooting. You are not in the room',
+      });
     }
 
-    if (socket.data.roomId !== 'lobby' && this.server.sockets.adapter.rooms.get(socket.data.roomId).size) {
-      this.roomService.deleteRoom(socket.data.roomId);
+    const { roomId } = socket.data;
+    const roomExists = this.roomService.findRoom(roomId);
+    const roomReady = this.roomService.getRoomStatus(roomExists.roomId);
+    let result;
+    if (roomExists && roomReady === 'ready') {
+      result = {
+        result: 'ok',
+        status: 'success',
+        message: 'Shooting is ready',
+      };
+    } else {
+      result = {
+        result: 'ok',
+        status: 'fail',
+        message: 'Shooting is not ready',
+      };
     }
-    this.roomService.joinRoom(socket, { venueId, userEmail, roomId });
-    socket.emit('get-message', {
-      result: 'ok',
-      status: 'success',
-      message: 'Shooting is ready',
-      data: [
-        {
-          roomId,
-          hostId,
-        },
-      ],
-    });
+
+    socket.emit('get-message', result);
   }
 
   @SubscribeMessage('shooting')
   shooting(@MessageBody() data, @ConnectedSocket() socket: Socket) {
-    const { venueId, userEmail, command, roomId, hostId } = data;
+    const { nodeId, userEmail, command, hostId } = data;
+    const roomId = `${nodeId}::${hostId}`;
+
+    if (socket.data.roomId !== roomId) {
+      socket.emit('get-message', {
+        result: 'ok',
+        status: 'fail',
+        message: 'Failed to shoot. You are not in the room',
+      });
+    }
+    // 룸의 상태 정보를 filming으로 변경
+    this.roomService.updateRoomStatus(roomId, 'filming');
+
+    const taskId = uuidv4();
+    const tempId = uuidv4();
+    const payload: addTmpVideoRequest = {
+      tempId,
+      nodeId,
+      ownerEmail: userEmail,
+    };
+
     socket.except(hostId).emit('cmd-message', {
-      task_id: uuidv4(),
-      record_id: uuidv4(),
+      task_id: taskId,
+      record_id: tempId,
       command,
       upload_url: 'http://file.4dist.com/oss',
+      category: this.roomService.getSportsCategory(nodeId),
+      types: this.roomService.getRecordType(nodeId),
     });
+
+    this.addTempVideo(payload);
+  }
+
+  @SubscribeMessage('ack-message')
+  ackMessage(@MessageBody() data, @ConnectedSocket() socket: Socket) {
+    const { task_id, record_id, command, status } = data;
+
+    socket.to(socket.data.roomId).emit('get-message', {
+      task_id,
+      record_id,
+      command,
+      status,
+    });
+
+    this.roomService.exitRoom(socket.data.roomId, this.server.sockets);
+  }
+
+  addTempVideo(payload): Observable<any> {
+    return this.svc.shootingVideo(payload);
+  }
+
+  @SubscribeMessage('makeAlarm')
+  makeAlarm(@MessageBody() data, @ConnectedSocket() socket: Socket) {
+    const { record_id, command, type, contents, result } = data;
+    socket.emit('get-message', {
+      result: 'ok',
+      status: 'success',
+    });
+
+    if (result === 'success') {
+      switch (command) {
+        case 'makemovie':
+          this.roomService.checkReady({
+            tempId: record_id,
+            roomId: socket.data.roomId,
+            nodeId: socket.data.nodeId,
+            type,
+            contents,
+          });
+          break;
+        case 'uploadfile':
+          this.roomService.uploadDone({
+            tempId: record_id,
+            type,
+            contents,
+          });
+          break;
+      }
+    }
   }
 }

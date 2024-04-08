@@ -19,23 +19,59 @@ import {
   MyVideoListResponse,
   MyVideoExistsRequest,
   MyVideoExistsResponse,
+  addTmpVideoRequest,
+  addTmpVideoResponse,
+  VIDEO_SERVICE_NAME,
+  VideoServiceClient,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { Request } from 'express';
-import * as requestPromise from 'request-promise';
+
 import { RealIP } from 'nestjs-real-ip';
 
 @ApiTags('FDist - Video')
 @Controller({ path: 'video' })
 export class FDistController implements OnModuleInit {
   private svc: FDistServiceClient;
+  private videoService: VideoServiceClient;
 
   @Inject(F_DIST_SERVICE_NAME)
   private readonly client: ClientGrpc;
 
+  @Inject(VIDEO_SERVICE_NAME)
+  private readonly videoClient: ClientGrpc;
+
+
+
   onModuleInit() {
     this.svc = this.client.getService<FDistServiceClient>(F_DIST_SERVICE_NAME);
+    this.videoService = this.videoClient.getService<VideoServiceClient>(VIDEO_SERVICE_NAME);
+  }
+
+  @ApiOperation({ summary: '임시 영상 추가' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        tempId: {
+          type: 'string',
+          description: '임시 영상 ID',
+        },
+        nodeId: {
+          type: 'string',
+          description: '노드 ID',
+        },
+        ownerEmail: {
+          type: 'string',
+          description: '소유자 이메일',
+        },
+      },
+    },
+  })
+  @Post('shooting')
+  public addTmpVideo(@Body() addTmpVideoRequest: addTmpVideoRequest): Observable<addTmpVideoResponse> {
+    return this.videoService.shootingVideo(addTmpVideoRequest);
   }
 
   @ApiOperation({ summary: '영상 목록' })

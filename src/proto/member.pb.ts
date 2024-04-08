@@ -319,6 +319,7 @@ export interface SignInResult {
   pushreceive?: boolean | undefined;
   emailreceive?: boolean | undefined;
   token?: string | undefined;
+  signType?: string | undefined;
   error?: string | undefined;
 }
 
