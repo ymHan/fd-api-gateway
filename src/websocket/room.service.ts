@@ -106,7 +106,7 @@ export class RoomService {
   }
 
   getRecordType(roomId: string): string[] {
-    const id = parseInt(roomId.split('::')[0].substring(5, 1), 10);
+    const id = parseInt(roomId.split('::')[0].substring(5, 6), 10);
     const tmpAr = ['ASSIST', 'SHORTS', 'SHORTS+'];
     switch (id) {
       case 1: // only assist
