@@ -131,6 +131,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     }
   }
 
+  // 촬영 가능 여부 판단
   @SubscribeMessage('checkShooting')
   checkShooting(@ConnectedSocket() socket: Socket) {
     if (socket.data.roomId === 'lobby') {
@@ -162,6 +163,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     socket.emit('get-message::checkShooting', result);
   }
 
+  // 촬영 명령어 전달
   @SubscribeMessage('shooting')
   shooting(@MessageBody() data, @ConnectedSocket() socket: Socket) {
     const { nodeId, userEmail, command, hostId } = data;
@@ -184,8 +186,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       nodeId,
       ownerEmail: userEmail,
     };
+    this.addTempVideo(payload);
 
-    socket.except(hostId).emit('cmd-message::shooting', {
+    socket.except(hostId).emit('cmd-message', {
       task_id: taskId,
       record_id: tempId,
       command,
@@ -194,7 +197,11 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       types: this.roomService.getRecordType(nodeId),
     });
 
-    this.addTempVideo(payload);
+    socket.emit('get-message::shooting', {
+      result: 'ok',
+      status: 'success',
+      message: 'Filming is progress',
+    });
   }
 
   @SubscribeMessage('ack-message')
@@ -225,14 +232,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
     if (result === 'success') {
       switch (command) {
-        case 'makemovie':
-          this.roomService.checkReady({
-            tempId: record_id,
-            roomId: socket.data.roomId,
-            nodeId: socket.data.nodeId,
-            type,
-            contents,
-          });
+        case 'makemovie': // 일단 아무것도 하지 않는다.
           break;
         case 'uploadfile':
           this.roomService.uploadDone({

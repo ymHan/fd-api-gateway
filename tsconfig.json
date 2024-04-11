@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "typeRoots": ["./src/@types", "./node_modules/@types"],
     "paths": {
+      "@/*": ["src/*"],
       "@root/*": ["./src/*"],
       "@proto/*": ["./src/proto/*"],
       "@config/*": ["./src/config/*"],

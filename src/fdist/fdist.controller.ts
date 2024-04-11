@@ -20,7 +20,6 @@ import {
   MyVideoExistsRequest,
   MyVideoExistsResponse,
   addTmpVideoRequest,
-  addTmpVideoResponse,
   VIDEO_SERVICE_NAME,
   VideoServiceClient,
 } from '@proto/fdist.pb';
@@ -41,8 +40,6 @@ export class FDistController implements OnModuleInit {
 
   @Inject(VIDEO_SERVICE_NAME)
   private readonly videoClient: ClientGrpc;
-
-
 
   onModuleInit() {
     this.svc = this.client.getService<FDistServiceClient>(F_DIST_SERVICE_NAME);
@@ -73,6 +70,32 @@ export class FDistController implements OnModuleInit {
   @Post('shooting')
   public addTmpVideo(@Body() addTmpVideoRequest: addTmpVideoRequest): Observable<any> {
     return this.videoService.shootingVideo(addTmpVideoRequest);
+  }
+
+  @ApiOperation({ summary: '영상 등록' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        tempId: {
+          type: 'string',
+          description: '임시 영상 ID',
+        },
+        recordType: {
+          type: 'string',
+          description: '레코드 타입',
+        },
+        contents: {
+          type: 'array',
+          description: '작업결과물',
+        },
+      },
+    },
+  })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @Post('Upload')
+  public videoUpload(@Body() payload: any): Observable<any> {
+    return this.videoService.videoUpload(payload);
   }
 
   @ApiOperation({ summary: '영상 목록' })

@@ -137,13 +137,9 @@ export class RoomService {
     return nodeId.split('::')[0].substring(0, 5);
   }
 
-  checkReady(payload) {
-    const { tempId, roomId, nodeId, type, contents } = payload;
-
-  }
-
   uploadDone(payload) {
     const { tempId, type, contents } = payload;
+
     axios.post(FDITION_UPLOAD_DONE_URL, {
       tempId,
       type,
