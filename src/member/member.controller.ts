@@ -459,6 +459,11 @@ export class MemberController implements OnModuleInit {
           ],
           description: '가입자 종류 및 권한',
         },
+        devicetoken: {
+          type: 'string',
+          description: '파이어베이스 토큰',
+          nullable: true,
+        },
       },
     },
   })
@@ -467,6 +472,25 @@ export class MemberController implements OnModuleInit {
     return this.svc.socialSignIn(socialSignInRequest);
   }
 
+  @ApiOperation({ summary: '파이어베이스 토큰정보 업데이트' })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @ApiParam({
+    name: 'id',
+    description: '사용자 ID',
+    required: true,
+    type: 'number',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        devicetoken: {
+          type: 'string',
+          description: 'token string',
+        },
+      },
+    },
+  })
   @Patch('/user/:id/devicetoken')
   public updateDeviceToken(
     @Param('id') userid: number,
