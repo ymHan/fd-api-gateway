@@ -44,6 +44,8 @@ import {
   UpdateEmailReceiveResponse,
   UpdateEmailReceiveRequest,
   SocialSignInRequest,
+  UpdateDeviceTokenRequest,
+  UpdateDeviceTokenResponse,
 } from '@proto/member.pb';
 import {
   ApiTags,
@@ -138,6 +140,10 @@ export class MemberController implements OnModuleInit {
         password: {
           type: 'string',
           description: '비밀번호',
+        },
+        devicetoken: {
+          type: 'string',
+          description: '디바이스ID (firebase 제공 토큰)',
         },
       },
     },
@@ -459,5 +465,14 @@ export class MemberController implements OnModuleInit {
   @Post('social/signin')
   public socialSignin(@Req() req: Request, @Body() socialSignInRequest: SocialSignInRequest): Observable<SignInResponse> {
     return this.svc.socialSignIn(socialSignInRequest);
+  }
+
+  @Patch('/user/:id/devicetoken')
+  public updateDeviceToken(
+    @Param('id') userid: number,
+    @Body('devicetoken') devicetoken: string,
+  ): Observable<UpdateDeviceTokenResponse> {
+    const payload: UpdateDeviceTokenRequest = { userid, devicetoken };
+    return this.svc.updateDeviceToken(payload);
   }
 }
