@@ -459,6 +459,11 @@ export class MemberController implements OnModuleInit {
           ],
           description: '가입자 종류 및 권한',
         },
+        devicetoken: {
+          type: 'string',
+          description: '파이어베이스 토큰',
+          nullable: true,
+        },
       },
     },
   })
