@@ -309,6 +309,7 @@ export interface UpdateResponse {
 export interface SignInRequest {
   email: string;
   password: string;
+  devicetoken?: string | undefined;
 }
 
 export interface SignInResult {
@@ -355,6 +356,24 @@ export interface SocialSignInRequest {
   pushreceive: boolean;
   emailreceive: boolean;
   usertype: string;
+  devicetoken?: string | undefined;
+}
+
+export interface UpdateDeviceTokenRequest {
+  userid: number;
+  devicetoken: string;
+}
+
+export interface UpdateDeviceTokenResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: UpdateDeviceTokenResponse_DATA[];
+}
+
+export interface UpdateDeviceTokenResponse_DATA {
+  result?: boolean | undefined;
+  error?: string | undefined;
 }
 
 export const MEMBER_PACKAGE_NAME = "member";
@@ -401,6 +420,8 @@ export interface MemberServiceClient {
   updateNickname(request: UpdateNicknameRequest): Observable<UpdateNicknameResponse>;
 
   socialSignIn(request: SocialSignInRequest): Observable<SignInResponse>;
+
+  updateDeviceToken(request: UpdateDeviceTokenRequest): Observable<UpdateDeviceTokenResponse>;
 }
 
 export interface MemberServiceController {
@@ -474,6 +495,10 @@ export interface MemberServiceController {
   ): Promise<UpdateNicknameResponse> | Observable<UpdateNicknameResponse> | UpdateNicknameResponse;
 
   socialSignIn(request: SocialSignInRequest): Promise<SignInResponse> | Observable<SignInResponse> | SignInResponse;
+
+  updateDeviceToken(
+    request: UpdateDeviceTokenRequest,
+  ): Promise<UpdateDeviceTokenResponse> | Observable<UpdateDeviceTokenResponse> | UpdateDeviceTokenResponse;
 }
 
 export function MemberServiceControllerMethods() {
@@ -499,6 +524,7 @@ export function MemberServiceControllerMethods() {
       "updateEmailReceive",
       "updateNickname",
       "socialSignIn",
+      "updateDeviceToken",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
