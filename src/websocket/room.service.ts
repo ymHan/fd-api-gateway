@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ListRoomDto } from './list-room.dto';
 import { Socket } from 'socket.io';
+import { HttpService } from '@nestjs/axios';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 const FDITION_UPLOAD_DONE_URL = process.env.FDITION_UPLOAD_DONE_URL;
 
-import axios from 'axios';
-
 @Injectable()
 export class RoomService {
   private roomList: any;
-  constructor() {
+  constructor(
+    private readonly httpService: HttpService,
+  ) {
     this.roomList = [
       {
         roomId: 'lobby',
@@ -140,7 +141,7 @@ export class RoomService {
   uploadDone(payload) {
     const { tempId, type, contents } = payload;
 
-    axios.post(FDITION_UPLOAD_DONE_URL, {
+    this.httpService.post(FDITION_UPLOAD_DONE_URL, {
       tempId,
       type,
       contents,

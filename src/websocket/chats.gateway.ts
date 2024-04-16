@@ -1,4 +1,5 @@
-import { Inject } from '@nestjs/common';
+import { ForbiddenException, Inject } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 import {
   ConnectedSocket,
   OnGatewayConnection,
@@ -14,7 +15,10 @@ import { RoomService } from './room.service';
 import { v4 as uuidv4 } from 'uuid';
 import { VIDEO_SERVICE_NAME, VideoServiceClient, addTmpVideoRequest } from '@proto/fdist.pb';
 import { ClientGrpc } from '@nestjs/microservices';
-import { Observable } from 'rxjs';
+import { lastValueFrom, map, catchError } from 'rxjs';
+
+const FDITION_UPLOAD_DONE_URL = process.env.FDITION_UPLOAD_DONE_URL;
+const FDITION_UPLOAD_TEMP_URL = `${process.env.FDITION_UPLOAD_TEMP_URL}`;
 
 @WebSocketGateway()
 export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -29,7 +33,10 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.svc = this.client.getService<VideoServiceClient>(VIDEO_SERVICE_NAME);
   }
 
-  constructor(private readonly roomService: RoomService) {}
+  constructor(
+    private readonly roomService: RoomService,
+    private readonly httpService: HttpService
+    ) {}
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
     const { roomId } = socket.data;
@@ -165,10 +172,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   // 촬영 명령어 전달
   @SubscribeMessage('shooting')
-  shooting(@MessageBody() data, @ConnectedSocket() socket: Socket) {
+  async shooting(@MessageBody() data, @ConnectedSocket() socket: Socket) {
     const { nodeId, userEmail, command, hostId } = data;
     const roomId = `${nodeId}::${hostId}`;
-
     if (socket.data.roomId !== roomId) {
       socket.emit('get-message::shooting', {
         result: 'ok',
@@ -176,32 +182,41 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         message: 'Failed to shoot. You are not in the room',
       });
     }
-    // 룸의 상태 정보를 filming으로 변경
-    this.roomService.updateRoomStatus(roomId, 'filming');
 
-    const taskId = uuidv4();
-    const tempId = uuidv4();
-    const payload: addTmpVideoRequest = {
-      tempId,
-      nodeId,
-      ownerEmail: userEmail,
-    };
-    this.addTempVideo(payload);
+    if (this.roomService.getRoomStatus(roomId) !== 'ready') {
+      socket.emit('get-message::shooting', {
+        result: 'ok',
+        status: 'fail',
+        message: 'Currently in preparation for shooting. Please wait a moment.',
+      });
+    } else {
+      // 룸의 상태 정보를 filming으로 변경
+      this.roomService.updateRoomStatus(roomId, 'filming');
+      const taskId = uuidv4();
+      const tempId = uuidv4();
+      const payload: addTmpVideoRequest = {
+        tempId,
+        nodeId,
+        ownerEmail: userEmail,
+      };
 
-    socket.except(hostId).emit('cmd-message', {
-      task_id: taskId,
-      record_id: tempId,
-      command,
-      upload_url: 'http://file.4dist.com/oss',
-      category: this.roomService.getSportsCategory(nodeId),
-      types: this.roomService.getRecordType(nodeId),
-    });
+      socket.except(hostId).emit('cmd-message', {
+        task_id: taskId,
+        record_id: tempId,
+        command,
+        upload_url: 'http://file.4dist.com/oss',
+        category: this.roomService.getSportsCategory(nodeId),
+        types: this.roomService.getRecordType(nodeId),
+      });
 
-    socket.emit('get-message::shooting', {
-      result: 'ok',
-      status: 'success',
-      message: 'Filming is progress',
-    });
+      socket.emit('get-message::shooting', {
+        result: 'ok',
+        status: 'success',
+        message: 'Filming is progress',
+      });
+
+      await this.addTempVideo(payload);
+    }
   }
 
   @SubscribeMessage('ack-message')
@@ -218,8 +233,22 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.roomService.exitRoom(socket.data.roomId, this.server.sockets);
   }
 
-  addTempVideo(payload): Observable<any> {
-    return this.svc.shootingVideo(payload);
+  async addTempVideo(payload:addTmpVideoRequest) {
+    const options = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const request = this.httpService
+      .post(process.env.FDITION_UPLOAD_TEMP_URL, JSON.stringify(payload), options)
+      .pipe(map((res) => res.data))
+      .pipe(
+        catchError( ()=> {
+          throw new ForbiddenException('API not available');
+        }),
+      )
+    await lastValueFrom(request);
   }
 
   @SubscribeMessage('makeAlarm')
@@ -233,6 +262,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     if (result === 'success') {
       switch (command) {
         case 'makemovie': // 일단 아무것도 하지 않는다.
+          console.log('make movie');
           break;
         case 'uploadfile':
           this.roomService.uploadDone({

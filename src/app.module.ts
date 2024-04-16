@@ -7,10 +7,12 @@ import { FDtionModule } from '@root/fdtion/fdtion.module';
 import { FDistModule } from '@root/fdist/fdist.module';
 import { WebsocketModule } from '@root/websocket/websokcet.module';
 import { RouterModule } from '@nestjs/core';
+import { HttpModule } from '@nestjs/axios';
 
 
 @Module({
   imports: [
+    HttpModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`,

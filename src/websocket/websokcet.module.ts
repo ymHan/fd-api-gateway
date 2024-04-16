@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { VIDEO_SERVICE_NAME, FDIST_PACKAGE_NAME } from '@proto/fdist.pb';
+import { HttpModule } from '@nestjs/axios';
 
 import { ChatsGateway } from '@root/websocket/chats.gateway';
 import { RoomService } from '@root/websocket/room.service';
@@ -8,6 +9,7 @@ import { RoomService } from '@root/websocket/room.service';
 @Global()
 @Module({
   imports: [
+    HttpModule,
     ClientsModule.register([
       {
         name: VIDEO_SERVICE_NAME,
@@ -21,5 +23,6 @@ import { RoomService } from '@root/websocket/room.service';
     ]),
   ],
   providers: [ChatsGateway, RoomService],
+  exports: [ChatsGateway, RoomService],
 })
 export class WebsocketModule {}
