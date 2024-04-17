@@ -20,6 +20,7 @@
     "typeRoots": ["./src/@types", "./node_modules/@types"],
     "paths": {
       "@/*": ["src/*"],
+      "@entities/*": ["src/models/entities/*"],
       "@root/*": ["./src/*"],
       "@proto/*": ["./src/proto/*"],
       "@config/*": ["./src/config/*"],

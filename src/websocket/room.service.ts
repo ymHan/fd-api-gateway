@@ -20,6 +20,8 @@ export class RoomService {
         roomStatus: null,
         recordTypes: [],
         userList: [],
+        uploadCnt: 0,
+        uploadDone: false,
       },
     ];
   }
@@ -34,6 +36,7 @@ export class RoomService {
       hostId: client.id,
       roomStatus: 'ready',
       recordTypes: this.getRecordType(roomId),
+      uploadCnt: this.getUploadCnt(roomId),
       userList: [],
     });
 
@@ -134,6 +137,36 @@ export class RoomService {
     return tmpAr;
   }
 
+  getUploadCnt(roomId: string): number {
+    const id = parseInt(roomId.split('::')[0].substring(5, 6), 10);
+    let result = 0;
+
+    switch (id) {
+      case 1:
+        result = 1;
+        break;
+      case 2:
+        result = 1;
+        break;
+      case 3:
+        result = 1;
+        break;
+      case 4:
+        result = 2;
+        break;
+      case 5:
+        result = 2;
+        break;
+      case 6:
+        result = 2;
+        break;
+      case 7:
+        result = 3;
+        break;
+    }
+    return result;
+  }
+
   getSportsCategory(nodeId: string): string {
     return nodeId.split('::')[0].substring(0, 5);
   }
@@ -163,5 +196,9 @@ export class RoomService {
         break;
     }
     return result;
+  }
+
+  makeStatusReady(roomId: string) {
+    console.log('makeStatusReady', this.roomList[this.arrFindIndex('roomId', roomId)])
   }
 }

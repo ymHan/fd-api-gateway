@@ -85,7 +85,7 @@ export class FDistController implements OnModuleInit {
           type: 'string',
           description: '카테고리',
         },
-        recordType: {
+        type: {
           type: 'string',
           description: '레코드 타입',
         },

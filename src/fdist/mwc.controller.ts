@@ -67,7 +67,7 @@ export class MwcController implements OnModuleInit {
     return this.mwcSvc.updateVideoMetaInfo(payload);
   }
 
-  @Post('vide/publish')
+  @Post('video/publish')
   @ApiOperation({ summary: '영상 공개/비공개' })
   @ApiBody({
     schema: {

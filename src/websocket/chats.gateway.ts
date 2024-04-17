@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import {
   ConnectedSocket,
@@ -198,6 +198,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         status: 'fail',
         message: 'Failed to shoot. You are not in the room',
       });
+      return;
     }
 
     if (this.roomService.getRoomStatus(roomId) !== 'ready') {
@@ -289,20 +290,45 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
               JSON.stringify({
                 tempId: record_id,
                 category,
-                type,
+                recordType: type,
                 contents,
               }),
               options,
             )
-            .pipe(map((res) => res.data))
-            .pipe(
-              catchError(() => {
-                throw new ForbiddenException('API not available');
-              }),
-            );
-          lastValueFrom(request).then((r) => console.log(r));
+            .pipe(map((res) => {
+              this.sendPush(res.data);
+              this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadCnt -= 1;
+              if (this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadDone) {
+                this.roomService.updateRoomStatus(socket.data.roomId, 'ready');
+                this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadCnt = this.roomService.getUploadCnt(socket.data.roomId);
+                this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadDone = false;
+              }
+            }));
+          lastValueFrom(request).then(res => console.log(res));
           break;
       }
     }
+  }
+
+  sendPush(payload: any) {
+    const sendData = {
+      userId: payload.userId,
+      title: '',
+      body: '',
+      data: {
+        key: 'video',
+        value: payload.recordType
+      }
+    }
+    const options = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+    const request = this.httpService
+      .post(process.env.FDIST_PUSH_NOTIFICATION_URL, JSON.stringify(sendData), options,)
+      .pipe(map((res) => res.data));
+    lastValueFrom(request).then(res => console.log(res));
+
   }
 }
