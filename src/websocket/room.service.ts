@@ -139,12 +139,29 @@ export class RoomService {
   }
 
   uploadDone(payload) {
-    const { tempId, type, contents } = payload;
+    const { tempId, category, type, contents } = payload;
 
     this.httpService.post(FDITION_UPLOAD_DONE_URL, {
       tempId,
       type,
       contents,
     });
+  }
+
+  makeCategory(nodeId: string): string {
+    const str = nodeId.substring(0, 1).toLowerCase();
+    let result = '';
+    switch (str) {
+      case 's':
+        result = 'SPORTS';
+        break;
+      case 'e':
+        result = 'ENTERTAINMENTS';
+        break;
+      case 'p':
+        result = 'PROMOTION';
+        break;
+    }
+    return result;
   }
 }

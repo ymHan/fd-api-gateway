@@ -7,6 +7,9 @@ export const protobufPackage = "fdist";
 
 export interface VideoUploadRequest {
   tempId: string;
+  category: string;
+  recordType: string;
+  contents: string[];
 }
 
 export interface VideoUploadResponse {

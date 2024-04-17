@@ -17,9 +17,6 @@ import { VIDEO_SERVICE_NAME, VideoServiceClient, addTmpVideoRequest } from '@pro
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom, map, catchError } from 'rxjs';
 
-const FDITION_UPLOAD_DONE_URL = process.env.FDITION_UPLOAD_DONE_URL;
-const FDITION_UPLOAD_TEMP_URL = `${process.env.FDITION_UPLOAD_TEMP_URL}`;
-
 @WebSocketGateway()
 export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
@@ -35,14 +32,15 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   constructor(
     private readonly roomService: RoomService,
-    private readonly httpService: HttpService
-    ) {}
+    private readonly httpService: HttpService,
+  ) {}
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
     const { roomId } = socket.data;
     if (roomId !== 'lobby' && !this.server.sockets.adapter.rooms.get(roomId)) {
       this.roomService.deleteRoom(roomId);
     }
+
   }
 
   handleConnection(@ConnectedSocket() socket: Socket) {
@@ -61,8 +59,22 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     // 바로 실행해야 하는 경우 여기다 때려 박는다...
   }
 
+  @SubscribeMessage('leave')
+  leaveRoom(@ConnectedSocket() socket: Socket) {
+
+  }
+
   @SubscribeMessage('makeRoom') //4dition
   makeRoom(@MessageBody() data, @ConnectedSocket() socket: Socket) {
+    if (Object.keys(data).length === 0 || Object.keys(data)[0] !== 'nodeId') {
+      socket.emit('get-message', {
+        result: 'ok',
+        status: 'fail',
+        message: 'Failed to make room. Invalid data',
+      });
+      return;
+    }
+
     const { nodeId } = data;
     const roomId = `${nodeId}::${socket.id}`;
     if (socket.data.roomId !== 'lobby' && this.server.sockets.adapter.rooms.get(socket.data.roomId).size) {
@@ -101,6 +113,11 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     } else {
       // 이미 접속해 있는 경우 재접속 차단
       if (socket.rooms.has(roomExists.roomId)) {
+        socket.emit('get-message::joinRoom', {
+          result: 'ok',
+          status: 'fail',
+          message: 'You are already in the room',
+        });
         return;
       }
 
@@ -233,7 +250,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.roomService.exitRoom(socket.data.roomId, this.server.sockets);
   }
 
-  async addTempVideo(payload:addTmpVideoRequest) {
+  async addTempVideo(payload: addTmpVideoRequest) {
     const options = {
       headers: {
         'Content-Type': 'application/json',
@@ -242,18 +259,13 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
     const request = this.httpService
       .post(process.env.FDITION_UPLOAD_TEMP_URL, JSON.stringify(payload), options)
-      .pipe(map((res) => res.data))
-      .pipe(
-        catchError( ()=> {
-          throw new ForbiddenException('API not available');
-        }),
-      )
+      .pipe(map((res) => res.data));
     await lastValueFrom(request);
   }
 
   @SubscribeMessage('makeAlarm')
   makeAlarm(@MessageBody() data, @ConnectedSocket() socket: Socket) {
-    const { record_id, command, type, contents, result } = data;
+    const { record_id, command, type, contents, result, category } = data;
     socket.emit('get-message', {
       result: 'ok',
       status: 'success',
@@ -265,11 +277,30 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
           console.log('make movie');
           break;
         case 'uploadfile':
-          this.roomService.uploadDone({
-            tempId: record_id,
-            type,
-            contents,
-          });
+          const options = {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          };
+
+          const request = this.httpService
+            .post(
+              process.env.FDITION_UPLOAD_DONE_URL,
+              JSON.stringify({
+                tempId: record_id,
+                category,
+                type,
+                contents,
+              }),
+              options,
+            )
+            .pipe(map((res) => res.data))
+            .pipe(
+              catchError(() => {
+                throw new ForbiddenException('API not available');
+              }),
+            );
+          lastValueFrom(request).then((r) => console.log(r));
           break;
       }
     }
