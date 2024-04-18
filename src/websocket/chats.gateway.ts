@@ -1,4 +1,3 @@
-import { Inject } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import {
   ConnectedSocket,
@@ -13,23 +12,11 @@ import {
 import { Socket, Server } from 'socket.io';
 import { RoomService } from './room.service';
 import { v4 as uuidv4 } from 'uuid';
-import { VIDEO_SERVICE_NAME, VideoServiceClient, addTmpVideoRequest } from '@proto/fdist.pb';
-import { ClientGrpc } from '@nestjs/microservices';
-import { lastValueFrom, map, catchError } from 'rxjs';
+import { lastValueFrom, map } from 'rxjs';
 
 @WebSocketGateway()
 export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
-
-  private svc: VideoServiceClient;
-
-  @Inject(VIDEO_SERVICE_NAME)
-  private readonly client: ClientGrpc;
-
-  onModuleInit() {
-    this.svc = this.client.getService<VideoServiceClient>(VIDEO_SERVICE_NAME);
-  }
-
   constructor(
     private readonly roomService: RoomService,
     private readonly httpService: HttpService,
@@ -206,7 +193,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       this.roomService.updateRoomStatus(roomId, 'filming');
       const taskId = uuidv4();
       const tempId = uuidv4();
-      const payload: addTmpVideoRequest = {
+      const payload = {
         tempId,
         nodeId,
         ownerEmail: userEmail,
@@ -246,7 +233,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.roomService.exitRoom(socket.data.roomId, this.server.sockets);
   }
 
-  async addTempVideo(payload: addTmpVideoRequest) {
+  async addTempVideo(payload) {
     const options = {
       headers: {
         'Content-Type': 'application/json',
