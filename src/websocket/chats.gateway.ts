@@ -48,7 +48,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   @SubscribeMessage('makeRoom') //4dition
   makeRoom(@MessageBody() data, @ConnectedSocket() socket: Socket) {
     if (Object.keys(data).length === 0 || Object.keys(data)[0] !== 'nodeId') {
-      socket.emit('get-message', {
+      socket.emit('room-message', {
         result: 'ok',
         status: 'fail',
         message: 'Failed to make room. Invalid data',
@@ -64,7 +64,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
     this.roomService.makeRoom(socket, roomId);
 
-    socket.emit('get-message', {
+    socket.emit('room-message', {
       result: 'ok',
       status: 'success',
       message: 'Shooting is ready',
@@ -247,13 +247,12 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   @SubscribeMessage('makeReady')
-  makeReady(@MessageBody() data, @ConnectedSocket() socket: Socket) {
-    const { roomId } = data;
-    const nodeId = roomId.split('::')[0];
+  makeReady(@ConnectedSocket() socket: Socket) {
+    const nodeId = socket.data.roomId.split('::')[0];
     const roomExists = this.roomService.findRoom(nodeId);
 
     roomExists.status = 'ready';
-    socket.emit('cmd-message', {
+    socket.emit('ready-message', {
       result: 'ok',
       status: 'success',
     });
