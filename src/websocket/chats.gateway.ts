@@ -251,7 +251,8 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const nodeId = socket.data.roomId.split('::')[0];
     const roomExists = this.roomService.findRoom(nodeId);
 
-    roomExists.status = 'ready';
+    roomExists.roomStatus = 'ready';
+
     socket.emit('ready-message', {
       result: 'ok',
       status: 'success',
