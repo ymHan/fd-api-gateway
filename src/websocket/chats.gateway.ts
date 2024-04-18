@@ -246,6 +246,19 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     await lastValueFrom(request);
   }
 
+  @SubscribeMessage('makeReady')
+  makeReady(@MessageBody() data, @ConnectedSocket() socket: Socket) {
+    const { roomId } = data;
+    const nodeId = roomId.split('::')[0];
+    const roomExists = this.roomService.findRoom(nodeId);
+
+    roomExists.status = 'ready';
+    socket.emit('cmd-message', {
+      result: 'ok',
+      status: 'success',
+    });
+  }
+
   @SubscribeMessage('makeAlarm')
   makeAlarm(@MessageBody() data, @ConnectedSocket() socket: Socket) {
     const { record_id, command, type, contents, result, category } = data;
