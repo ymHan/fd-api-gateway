@@ -40,7 +40,6 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     if (roomId !== 'lobby' && !this.server.sockets.adapter.rooms.get(roomId)) {
       this.roomService.deleteRoom(roomId);
     }
-
   }
 
   handleConnection(@ConnectedSocket() socket: Socket) {
@@ -60,9 +59,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   @SubscribeMessage('leave')
-  leaveRoom(@ConnectedSocket() socket: Socket) {
-
-  }
+  leaveRoom(@ConnectedSocket() socket: Socket) {}
 
   @SubscribeMessage('makeRoom') //4dition
   makeRoom(@MessageBody() data, @ConnectedSocket() socket: Socket) {
@@ -221,6 +218,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       socket.except(hostId).emit('cmd-message', {
         task_id: taskId,
         record_id: tempId,
+        user_email: userEmail,
         command,
         upload_url: 'http://file.4dist.com/oss',
         category: this.roomService.getSportsCategory(nodeId),
@@ -295,16 +293,19 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
               }),
               options,
             )
-            .pipe(map((res) => {
-              this.sendPush(res.data);
-              this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadCnt -= 1;
-              if (this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadDone) {
-                this.roomService.updateRoomStatus(socket.data.roomId, 'ready');
-                this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadCnt = this.roomService.getUploadCnt(socket.data.roomId);
-                this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadDone = false;
-              }
-            }));
-          lastValueFrom(request).then(res => console.log(res));
+            .pipe(
+              map((res) => {
+                this.sendPush(res.data);
+                this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadCnt -= 1;
+                if (this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadDone) {
+                  this.roomService.updateRoomStatus(socket.data.roomId, 'ready');
+                  this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadCnt =
+                    this.roomService.getUploadCnt(socket.data.roomId);
+                  this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadDone = false;
+                }
+              }),
+            );
+          lastValueFrom(request).then((res) => console.log(res));
           break;
       }
     }
@@ -314,18 +315,17 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const sendData = {
       userId: payload.userId,
       data: {
-        video: payload.recordType
-      }
-    }
+        video: payload.recordType,
+      },
+    };
     const options = {
       headers: {
         'Content-Type': 'application/json',
       },
-    }
+    };
     const request = this.httpService
-      .post(process.env.FDIST_PUSH_NOTIFICATION_URL, JSON.stringify(sendData), options,)
+      .post(process.env.FDIST_PUSH_NOTIFICATION_URL, JSON.stringify(sendData), options)
       .pipe(map((res) => res.data));
-    lastValueFrom(request).then(res => console.log(res));
-
+    lastValueFrom(request).then((res) => console.log(res));
   }
 }
