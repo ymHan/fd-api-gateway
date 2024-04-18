@@ -293,13 +293,13 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
             .pipe(
               map((res) => {
                 this.sendPush(res.data);
-                this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadCnt -= 1;
+                /*this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadCnt -= 1;
                 if (this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadDone) {
                   this.roomService.updateRoomStatus(socket.data.roomId, 'ready');
                   this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadCnt =
                     this.roomService.getUploadCnt(socket.data.roomId);
                   this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadDone = false;
-                }
+                }*/
               }),
             );
           lastValueFrom(request).then((res) => console.log(res));
