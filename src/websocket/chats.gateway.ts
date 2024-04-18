@@ -12,7 +12,7 @@ import {
 import { Socket, Server } from 'socket.io';
 import { RoomService } from './room.service';
 import { v4 as uuidv4 } from 'uuid';
-import { lastValueFrom, map } from 'rxjs';
+import { lastValueFrom, map, tap } from 'rxjs';
 
 @WebSocketGateway()
 export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -243,7 +243,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const request = this.httpService
       .post(process.env.FDITION_UPLOAD_TEMP_URL, JSON.stringify(payload), options)
       .pipe(map((res) => res.data));
-    await lastValueFrom(request);
+    lastValueFrom(request).then((res) => console.log('addTempVideo', res));
   }
 
   @SubscribeMessage('makeReady')
@@ -270,42 +270,36 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     if (result === 'success') {
       switch (command) {
         case 'makemovie': // 일단 아무것도 하지 않는다.
-          console.log('make movie');
+          console.log('make movie', data);
           break;
         case 'uploadfile':
-          const options = {
-            headers: {
-              'Content-Type': 'application/json',
-            },
+          const payload = {
+            tempId: record_id,
+            category,
+            recordType: type,
+            contents,
           };
 
-          const request = this.httpService
-            .post(
-              process.env.FDITION_UPLOAD_DONE_URL,
-              JSON.stringify({
-                tempId: record_id,
-                category,
-                recordType: type,
-                contents,
-              }),
-              options,
-            )
-            .pipe(
-              map((res) => {
-                this.sendPush(res.data);
-                /*this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadCnt -= 1;
-                if (this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadDone) {
-                  this.roomService.updateRoomStatus(socket.data.roomId, 'ready');
-                  this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadCnt =
-                    this.roomService.getUploadCnt(socket.data.roomId);
-                  this.roomService.getRoomList[this.roomService.arrFindIndex('roomId', socket.data.roomId)].uploadDone = false;
-                }*/
-              }),
-            );
-          lastValueFrom(request).then((res) => console.log(res));
+          const result = this.uploadDone(payload);
+          result.then((res) => {
+            this.sendPush(res);
+          });
           break;
       }
     }
+  }
+
+  async uploadDone(payload) {
+    const options = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const request = this.httpService
+      .post(process.env.FDITION_UPLOAD_DONE_URL, JSON.stringify(payload), options)
+      .pipe(map((res) => res.data));
+    return await lastValueFrom(request);
   }
 
   sendPush(payload: any) {
@@ -323,6 +317,6 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const request = this.httpService
       .post(process.env.FDIST_PUSH_NOTIFICATION_URL, JSON.stringify(sendData), options)
       .pipe(map((res) => res.data));
-    lastValueFrom(request).then((res) => console.log(res));
+    lastValueFrom(request).then((res) => console.log('sendPush', res));
   }
 }
