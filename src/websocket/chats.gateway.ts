@@ -58,9 +58,6 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     // 바로 실행해야 하는 경우 여기다 때려 박는다...
   }
 
-  @SubscribeMessage('leave')
-  leaveRoom(@ConnectedSocket() socket: Socket) {}
-
   @SubscribeMessage('makeRoom') //4dition
   makeRoom(@MessageBody() data, @ConnectedSocket() socket: Socket) {
     if (Object.keys(data).length === 0 || Object.keys(data)[0] !== 'nodeId') {
