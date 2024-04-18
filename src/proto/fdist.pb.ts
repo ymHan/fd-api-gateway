@@ -13,8 +13,10 @@ export interface VideoUploadRequest {
 }
 
 export interface VideoUploadResponse {
-  id: number;
+  videoId: number;
+  userId: number;
   tempId: string;
+  recordType: string;
 }
 
 export interface addTmpVideoRequest {
@@ -244,6 +246,10 @@ export interface ToggleLikeResponse_DATA {
   result?: boolean | undefined;
   likeCount?: number | undefined;
   error?: string | undefined;
+}
+
+export interface GetCateorySubRequest {
+  lang: string;
 }
 
 export interface GetCategorySubResponse {
@@ -609,7 +615,7 @@ export interface FDistServiceClient {
 
   getCategory(request: Empty): Observable<GetCategoryResponse>;
 
-  getCategorySub(request: Empty): Observable<GetCategorySubResponse>;
+  getCategorySub(request: GetCateorySubRequest): Observable<GetCategorySubResponse>;
 
   getRecordType(request: Empty): Observable<GetRecordTypeResponse>;
 
@@ -656,7 +662,7 @@ export interface FDistServiceController {
   getCategory(request: Empty): Promise<GetCategoryResponse> | Observable<GetCategoryResponse> | GetCategoryResponse;
 
   getCategorySub(
-    request: Empty,
+    request: GetCateorySubRequest,
   ): Promise<GetCategorySubResponse> | Observable<GetCategorySubResponse> | GetCategorySubResponse;
 
   getRecordType(

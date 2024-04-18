@@ -313,11 +313,8 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   sendPush(payload: any) {
     const sendData = {
       userId: payload.userId,
-      title: '',
-      body: '',
       data: {
-        key: 'video',
-        value: payload.recordType
+        video: payload.recordType
       }
     }
     const options = {

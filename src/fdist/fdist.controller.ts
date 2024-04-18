@@ -24,7 +24,7 @@ import {
   VideoServiceClient,
 } from '@proto/fdist.pb';
 
-import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes, ApiHeader } from '@nestjs/swagger';
 import { Request } from 'express';
 
 import { RealIP } from 'nestjs-real-ip';
@@ -163,8 +163,6 @@ export class FDistController implements OnModuleInit {
   })
   @Get('videos/:id')
   public getVideoById(@Req() req: Request, @Param() params: GetVideoByIdRequest, @RealIP() ip: string): Observable<any> {
-    console.log(ip);
-
     return this.svc.getVideoById(params);
   }
 
@@ -176,8 +174,13 @@ export class FDistController implements OnModuleInit {
 
   @Get('categories')
   @ApiOperation({ summary: '서브 카테고리 조회' })
-  public getCategories(): Observable<GetCategorySubResponse> {
-    return this.svc.getCategorySub({});
+  @ApiHeader({
+    name: 'lang',
+    description: '언어',
+  })
+  public getCategories(@Req() request: Request): Observable<GetCategorySubResponse> {
+    const { lang } = request.headers;
+    return this.svc.getCategorySub({ "lang": lang as string });
   }
 
   @Get('recordType')
