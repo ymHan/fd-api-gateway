@@ -262,28 +262,32 @@ export class FDistController implements OnModuleInit {
   @ApiOperation({ summary: '내 영상 목록' })
   @ApiQuery({
     name: 'userEmail',
-    description: '사용자 이메일',
+    description: 'user email',
     type: 'string',
   })
   @ApiQuery({
     name: 'page',
-    description: 'page',
+    description: 'page number. default 1',
     type: 'number',
+    required: false,
   })
   @ApiQuery({
     name: 'limit',
-    description: 'limit',
+    description: 'get count per page. default 10',
     type: 'number',
+    required: false,
   })
   @ApiQuery({
     name: 'sort',
-    description: 'sort',
+    description: 'sort column name [createdAt etc]. default "createdAt"',
     type: 'string',
+    required: false,
   })
   @ApiQuery({
     name: 'order',
-    description: 'order',
+    description: 'Sort Method [asc | desc]. default "desc"',
     type: 'string',
+    required: false,
   })
   public myVideoList(
     @Query('userEmail') userEmail: string,
@@ -291,7 +295,7 @@ export class FDistController implements OnModuleInit {
     @Query('limit') limit: number,
     @Query('sort') sort: string,
     @Query('order') order: string,
-  ): Observable<MyVideoListResponse> {
+  ): Observable<any> {
     const payload: MyVideoListRequest = { userEmail, page, limit, sort, order };
     return this.svc.myVideoList(payload);
   }
