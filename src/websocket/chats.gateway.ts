@@ -47,6 +47,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   @SubscribeMessage('makeRoom') //4dition
   makeRoom(@MessageBody() data, @ConnectedSocket() socket: Socket) {
+    console.log(data);
     if (Object.keys(data).length === 0 || Object.keys(data)[0] !== 'nodeId') {
       socket.emit('room-message', {
         result: 'ok',

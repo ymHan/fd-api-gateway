@@ -179,7 +179,7 @@ export class FDistController implements OnModuleInit {
   @ApiOperation({ summary: '서브 카테고리 조회' })
   @ApiHeader({
     name: 'lang',
-    description: '언어',
+    description: '언어선택, kr | en | jp. default en',
   })
   public getCategories(@Req() request: Request): Observable<GetCategorySubResponse> {
     const { lang } = request.headers;
