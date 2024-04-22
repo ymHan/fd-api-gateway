@@ -13,6 +13,7 @@ import { Socket, Server } from 'socket.io';
 import { RoomService } from './room.service';
 import { v4 as uuidv4 } from 'uuid';
 import { lastValueFrom, map } from 'rxjs';
+import axios from 'axios';
 
 @WebSocketGateway()
 export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -285,9 +286,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
           };
 
           const result = this.uploadDone(payload);
-          result.then((res) => {
-            this.sendPush(res.data);
-          });
+          return result;
           break;
       }
     }
@@ -295,22 +294,14 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   async uploadDone(payload) {
     try {
-      const options = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
-      const request = this.httpService
-        .post(process.env.FDITION_UPLOAD_DONE_URL, JSON.stringify(payload), options)
-        .pipe(map((res) => res.data));
-      return await lastValueFrom(request).then((res) => res.data);
+      const up_msg = await this.axios_instance(process.env.FDITION_UPLOAD_DONE_URL, payload);
+      return await up_msg;
     } catch (error) {
       console.log('uploadDone error', error);
     }
   }
 
-  sendPush(payload: any) {
+  async sendPush(payload: any) {
     try {
       const sendData = {
         userId: payload.userId,
@@ -318,18 +309,24 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
           video: payload.recordType,
         },
       };
-      const options = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
 
-      const request = this.httpService
-        .post(process.env.FDIST_PUSH_NOTIFICATION_URL, JSON.stringify(sendData), options)
-        .pipe(map((res) => res.data));
-      lastValueFrom(request).then((res) => res.data);
+      const push_msg = await this.axios_instance(process.env.FDIST_PUSH_NOTIFICATION_URL, sendData);
+      return push_msg;
     } catch (error) {
       console.log('sendPush error', error);
     }
+  }
+
+  private axios_instance(url, data) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(url, data)
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   }
 }
