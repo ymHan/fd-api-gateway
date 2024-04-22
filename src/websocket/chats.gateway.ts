@@ -286,7 +286,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
           const result = this.uploadDone(payload);
           result.then((res) => {
-            this.sendPush(res);
+            this.sendPush(res.data);
           });
           break;
       }
