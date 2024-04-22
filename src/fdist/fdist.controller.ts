@@ -139,13 +139,15 @@ export class FDistController implements OnModuleInit {
   })
   @ApiQuery({
     name: 'page',
-    description: 'page',
+    description: '가져올 페이지. default 1',
     type: 'number',
+    required: false,
   })
   @ApiQuery({
     name: 'limit',
-    description: 'limit',
+    description: '페이지 당 가져올 영상 갯수. default 10',
     type: 'number',
+    required: false,
   })
   @Get('videos/recordType')
   public getVideoRecordType(
