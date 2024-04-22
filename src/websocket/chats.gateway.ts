@@ -304,7 +304,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       const request = this.httpService
         .post(process.env.FDITION_UPLOAD_DONE_URL, JSON.stringify(payload), options)
         .pipe(map((res) => res.data));
-      return await lastValueFrom(request).then((res) => res);
+      return await lastValueFrom(request).then((res) => res.data);
     } catch (error) {
       console.log('uploadDone error', error);
     }
@@ -327,7 +327,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       const request = this.httpService
         .post(process.env.FDIST_PUSH_NOTIFICATION_URL, JSON.stringify(sendData), options)
         .pipe(map((res) => res.data));
-      lastValueFrom(request).then((res) => console.log('sendPush', res));
+      lastValueFrom(request).then((res) => res.data);
     } catch (error) {
       console.log('sendPush error', error);
     }

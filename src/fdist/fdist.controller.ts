@@ -22,6 +22,7 @@ import {
   addTmpVideoRequest,
   VIDEO_SERVICE_NAME,
   VideoServiceClient,
+  IvpVideoResponse,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes, ApiHeader } from '@nestjs/swagger';
@@ -110,13 +111,15 @@ export class FDistController implements OnModuleInit {
   })
   @ApiQuery({
     name: 'page',
-    description: 'page',
+    description: '가져올 페이지. default 1',
     type: 'number',
+    required: false,
   })
   @ApiQuery({
     name: 'limit',
-    description: 'limit',
+    description: '페이지 당 가져올 영상 갯수. default 10',
     type: 'number',
+    required: false,
   })
   @Get('videos')
   public getVideos(
@@ -310,5 +313,17 @@ export class FDistController implements OnModuleInit {
   public myVideoExists(@Query('userEmail') userEmail: string): Observable<MyVideoExistsResponse> {
     const payload: MyVideoExistsRequest = { userEmail };
     return this.svc.myVideoExists(payload);
+  }
+
+  @Get('/video/ivp/:id')
+  @ApiOperation({ summary: 'IVP 메이킹 결과 통보' })
+  @ApiParam({
+    name: 'id',
+    description: '영상 ID',
+    required: true,
+    type: 'number',
+  })
+  public ivpVideo(@Param() params: GetVideoByIdRequest): Observable<any> {
+    return this.svc.ivpVideo(params);
   }
 }
