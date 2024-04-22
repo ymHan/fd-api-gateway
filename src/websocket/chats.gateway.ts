@@ -1,15 +1,15 @@
 import { HttpService } from '@nestjs/axios';
 import {
   ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
-  WebSocketGateway,
   SubscribeMessage,
+  WebSocketGateway,
   WebSocketServer,
-  MessageBody,
 } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { RoomService } from './room.service';
 import { v4 as uuidv4 } from 'uuid';
 import { lastValueFrom, map } from 'rxjs';
@@ -265,7 +265,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   @SubscribeMessage('makeAlarm')
-  makeAlarm(@MessageBody() data, @ConnectedSocket() socket: Socket) {
+  async makeAlarm(@MessageBody() data, @ConnectedSocket() socket: Socket) {
     const { record_id, command, type, contents, result, category } = data;
     socket.emit('get-message', {
       result: 'ok',
@@ -277,7 +277,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         case 'makemovie': // 일단 아무것도 하지 않는다.
           console.log('make movie', data);
           break;
-        case 'uploadfile':
+        case 'uploadfile': {
           const payload = {
             tempId: record_id,
             category,
@@ -285,35 +285,19 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
             contents,
           };
 
-          const result = this.uploadDone(payload);
-          return result;
-          break;
+          const result: any = await this.axios_instance(process.env.FDITION_UPLOAD_DONE_URL, payload);
+          console.log(result);
+
+          const sendData = {
+            userId: result.userId,
+            data: {
+              video: result.recordType,
+            },
+          };
+
+          return this.axios_instance(process.env.FDIST_PUSH_NOTIFICATION_URL, sendData);
+        }
       }
-    }
-  }
-
-  async uploadDone(payload) {
-    try {
-      const up_msg = await this.axios_instance(process.env.FDITION_UPLOAD_DONE_URL, payload);
-      return await up_msg;
-    } catch (error) {
-      console.log('uploadDone error', error);
-    }
-  }
-
-  async sendPush(payload: any) {
-    try {
-      const sendData = {
-        userId: payload.userId,
-        data: {
-          video: payload.recordType,
-        },
-      };
-
-      const push_msg = await this.axios_instance(process.env.FDIST_PUSH_NOTIFICATION_URL, sendData);
-      return push_msg;
-    } catch (error) {
-      console.log('sendPush error', error);
     }
   }
 
