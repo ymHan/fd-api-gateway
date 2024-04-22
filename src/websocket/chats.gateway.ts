@@ -234,16 +234,20 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   async addTempVideo(payload) {
-    const options = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
+    try {
+      const options = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
 
-    const request = this.httpService
-      .post(process.env.FDITION_UPLOAD_TEMP_URL, JSON.stringify(payload), options)
-      .pipe(map((res) => res.data));
-    lastValueFrom(request).then((res) => console.log('addTempVideo', res));
+      const request = this.httpService
+        .post(process.env.FDITION_UPLOAD_TEMP_URL, JSON.stringify(payload), options)
+        .pipe(map((res) => res.data));
+      lastValueFrom(request).then((res) => console.log('addTempVideo', res));
+    } catch (error) {
+      console.log('addTempVideo error', error);
+    }
   }
 
   @SubscribeMessage('makeReady')
@@ -290,33 +294,42 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   async uploadDone(payload) {
-    const options = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
+    try {
+      const options = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
 
-    const request = this.httpService
-      .post(process.env.FDITION_UPLOAD_DONE_URL, JSON.stringify(payload), options)
-      .pipe(map((res) => res.data));
-    return await lastValueFrom(request);
+      const request = this.httpService
+        .post(process.env.FDITION_UPLOAD_DONE_URL, JSON.stringify(payload), options)
+        .pipe(map((res) => res.data));
+      return await lastValueFrom(request).then((res) => res);
+    } catch (error) {
+      console.log('uploadDone error', error);
+    }
   }
 
   sendPush(payload: any) {
-    const sendData = {
-      userId: payload.userId,
-      data: {
-        video: payload.recordType,
-      },
-    };
-    const options = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-    const request = this.httpService
-      .post(process.env.FDIST_PUSH_NOTIFICATION_URL, JSON.stringify(sendData), options)
-      .pipe(map((res) => res.data));
-    lastValueFrom(request).then((res) => console.log('sendPush', res));
+    try {
+      const sendData = {
+        userId: payload.userId,
+        data: {
+          video: payload.recordType,
+        },
+      };
+      const options = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const request = this.httpService
+        .post(process.env.FDIST_PUSH_NOTIFICATION_URL, JSON.stringify(sendData), options)
+        .pipe(map((res) => res.data));
+      lastValueFrom(request).then((res) => console.log('sendPush', res));
+    } catch (error) {
+      console.log('sendPush error', error);
+    }
   }
 }
