@@ -98,7 +98,7 @@ export class FDistController implements OnModuleInit {
     },
   })
   @ApiConsumes('application/x-www-form-urlencoded')
-  @Post('Upload')
+  @Post('upload')
   public videoUpload(@Body() payload: any): Observable<any> {
     return this.videoService.videoUpload(payload);
   }
