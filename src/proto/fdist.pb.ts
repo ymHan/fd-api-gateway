@@ -58,6 +58,12 @@ export interface DeleteVideoResponse {
   message: string;
 }
 
+export interface IvpVideoResponse {
+  result: string;
+  status: number;
+  message: string;
+}
+
 export interface MyVideoExistsRequest {
   userEmail: string;
 }
@@ -628,6 +634,8 @@ export interface FDistServiceClient {
   myVideoList(request: MyVideoListRequest): Observable<MyVideoListResponse>;
 
   myVideoExists(request: MyVideoExistsRequest): Observable<MyVideoExistsResponse>;
+
+  ivpVideo(request: GetVideoByIdRequest): Observable<IvpVideoResponse>;
 }
 
 export interface FDistServiceController {
@@ -688,6 +696,8 @@ export interface FDistServiceController {
   myVideoExists(
     request: MyVideoExistsRequest,
   ): Promise<MyVideoExistsResponse> | Observable<MyVideoExistsResponse> | MyVideoExistsResponse;
+
+  ivpVideo(request: GetVideoByIdRequest): Promise<IvpVideoResponse> | Observable<IvpVideoResponse> | IvpVideoResponse;
 }
 
 export function FDistServiceControllerMethods() {
@@ -709,6 +719,7 @@ export function FDistServiceControllerMethods() {
       "reportVideo",
       "myVideoList",
       "myVideoExists",
+      "ivpVideo",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
