@@ -264,7 +264,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       switch (command) {
         case 'makemovie': {
           console.log('make movie', data);
-          const payload = { tempId: record_id, recordType: type, contents };
+          const payload = { tempId: record_id, recordType: type };
           const result: any = await this.axios_instance(process.env.FDITION_MAKE_URL, payload);
           console.log('make movie result', result);
           break;
