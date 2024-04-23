@@ -278,6 +278,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
           console.log('make movie', data);
           break;
         case 'uploadfile': {
+          console.log('upload file', data);
           const payload = { tempId: record_id, recordType: type, contents };
           const result: any = await this.axios_instance(process.env.FDITION_UPLOAD_DONE_URL, payload);
           const sendData = {
