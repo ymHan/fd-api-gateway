@@ -254,7 +254,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   @SubscribeMessage('makeAlarm')
   async makeAlarm(@MessageBody() data, @ConnectedSocket() socket: Socket) {
-    const { record_id, command, type, contents, result, duration, thumbnail } = data;
+    const { record_id, command, type, duration, thumbnail, contents, result} = data;
     socket.emit('get-message', {
       result: 'ok',
       status: 'success',
@@ -272,6 +272,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         case 'uploadfile': {
           console.log('upload file', data);
           const payload = { tempId: record_id, recordType: type, duration, thumbnail };
+          console.log(payload);
           const result: any = await this.axios_instance(process.env.FDITION_UPLOAD_DONE_URL, payload);
           const sendData = {
             userId: result.userId,
