@@ -100,8 +100,39 @@ export class FDistController implements OnModuleInit {
   @ApiConsumes('application/x-www-form-urlencoded')
   @Post('upload')
   public videoUpload(@Body() payload: any): Observable<any> {
-    return this.videoService.videoUpload(payload);
+    return this.videoService.videoDone(payload);
   }
+
+  @ApiOperation({ summary: '영상 등록 완료' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        tempId: {
+          type: 'string',
+          description: '임시 영상 ID',
+        },
+        category: {
+          type: 'string',
+          description: '카테고리',
+        },
+        type: {
+          type: 'string',
+          description: '레코드 타입',
+        },
+        contents: {
+          type: 'array',
+          description: '작업결과물',
+        },
+      },
+    },
+  })
+  @ApiConsumes('application/x-www-form-urlencoded')
+  @Post('make')
+  public videoMake(@Body() payload: any): Observable<any> {
+    return this.videoService.videoMake(payload);
+  }
+
 
   @ApiOperation({ summary: '영상 목록' })
   @ApiQuery({

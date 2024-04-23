@@ -5,6 +5,20 @@ import { Empty } from "./google/protobuf/empty.pb";
 
 export const protobufPackage = "fdist";
 
+export interface VideoMakeRequest {
+  videoId: number;
+  userId: number;
+  tempId: string;
+  recordType: string;
+}
+
+export interface VideoMakeResponse {
+  videoId: number;
+  userId: number;
+  tempId: string;
+  recordType: string;
+}
+
 export interface VideoUploadRequest {
   tempId: string;
   category: string;
@@ -564,7 +578,9 @@ export interface VideoServiceClient {
 
   shootingVideo(request: addTmpVideoRequest): Observable<addTmpVideoResponse>;
 
-  videoUpload(request: VideoUploadRequest): Observable<VideoUploadResponse>;
+  videoDone(request: VideoUploadRequest): Observable<VideoUploadResponse>;
+
+  videoMake(request: VideoMakeRequest): Observable<VideoMakeResponse>;
 }
 
 export interface VideoServiceController {
@@ -580,14 +596,16 @@ export interface VideoServiceController {
     request: addTmpVideoRequest,
   ): Promise<addTmpVideoResponse> | Observable<addTmpVideoResponse> | addTmpVideoResponse;
 
-  videoUpload(
+  videoDone(
     request: VideoUploadRequest,
   ): Promise<VideoUploadResponse> | Observable<VideoUploadResponse> | VideoUploadResponse;
+
+  videoMake(request: VideoMakeRequest): Promise<VideoMakeResponse> | Observable<VideoMakeResponse> | VideoMakeResponse;
 }
 
 export function VideoServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["togglePublished", "deleteVideo", "shootingVideo", "videoUpload"];
+    const grpcMethods: string[] = ["togglePublished", "deleteVideo", "shootingVideo", "videoDone", "videoMake"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("VideoService", method)(constructor.prototype[method], method, descriptor);
