@@ -234,21 +234,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     this.roomService.exitRoom(socket.data.roomId, this.server.sockets);
   }
 
-  async addTempVideo(payload) {
-    try {
-      const options = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
-      const request = this.httpService
-        .post(process.env.FDITION_UPLOAD_TEMP_URL, JSON.stringify(payload), options)
-        .pipe(map((res) => res.data));
-      lastValueFrom(request).then((res) => console.log('addTempVideo', res));
-    } catch (error) {
-      console.log('addTempVideo error', error);
-    }
+  async addTempVideo(payload: any) {
+      const result = await this.axios_instance(process.env.FDITION_UPLOAD_TEMP_URL, payload);
+      console.log(result);
   }
 
   @SubscribeMessage('makeReady')
