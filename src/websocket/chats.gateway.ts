@@ -235,8 +235,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   async addTempVideo(payload: any) {
-      const result = await this.axios_instance(process.env.FDITION_UPLOAD_TEMP_URL, payload);
-      console.log(result);
+    return await this.axios_instance(process.env.FDITION_UPLOAD_TEMP_URL, payload);
   }
 
   @SubscribeMessage('makeReady')
@@ -272,7 +271,6 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         case 'uploadfile': {
           console.log('upload file', data);
           const payload = { tempId: record_id, recordType: type, duration, thumbnail };
-          console.log(payload);
           const result: any = await this.axios_instance(process.env.FDITION_UPLOAD_DONE_URL, payload);
           const sendData = {
             userId: result.userId,
@@ -280,7 +278,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
               video: result.recordType,
             },
           };
+          console.log('sendData', sendData);
           const pushResult: any = this.axios_instance(process.env.FDIST_PUSH_NOTIFICATION_URL, sendData);
+          console.log('pushResult', pushResult);
           return pushResult;
         }
       }
