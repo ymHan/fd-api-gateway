@@ -10,9 +10,7 @@ const FDITION_UPLOAD_DONE_URL = process.env.FDITION_UPLOAD_DONE_URL;
 @Injectable()
 export class RoomService {
   private roomList: any;
-  constructor(
-    private readonly httpService: HttpService,
-  ) {
+  constructor(private readonly httpService: HttpService) {
     this.roomList = [
       {
         roomId: 'lobby',
@@ -42,6 +40,8 @@ export class RoomService {
 
     client.rooms.clear();
     client.join(roomId);
+
+    console.log('roomList', this.roomList);
   }
 
   joinRoom(client: Socket, data: any) {
@@ -199,6 +199,6 @@ export class RoomService {
   }
 
   makeStatusReady(roomId: string) {
-    console.log('makeStatusReady', this.roomList[this.arrFindIndex('roomId', roomId)])
+    console.log('makeStatusReady', this.roomList[this.arrFindIndex('roomId', roomId)]);
   }
 }
