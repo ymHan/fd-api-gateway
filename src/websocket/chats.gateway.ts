@@ -262,16 +262,15 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     if (result === 'success') {
       switch (command) {
         case 'makemovie': {
-          console.log('make movie', data);
           const payload = { tempId: record_id, recordType: type };
           const result: any = await this.axios_instance(process.env.FDITION_MAKE_URL, payload);
           console.log('make movie result', result);
           break;
         }
         case 'uploadfile': {
-          console.log('upload file', data);
           const payload = { tempId: record_id, recordType: type, duration, thumbnail };
           const result: any = await this.axios_instance(process.env.FDITION_UPLOAD_DONE_URL, payload);
+          console.log('upload file result', result);
           const sendData = {
             userId: result.userId,
             data: {
