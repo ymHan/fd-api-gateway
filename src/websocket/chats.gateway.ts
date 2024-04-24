@@ -278,7 +278,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
             },
           };
           console.log('sendData', sendData);
-          const pushResult: any = this.axios_instance(process.env.FDIST_PUSH_NOTIFICATION_URL, sendData);
+          const pushResult: any = await this.axios_instance(process.env.FDIST_PUSH_NOTIFICATION_URL, sendData);
           console.log('pushResult', pushResult);
           return pushResult;
         }
