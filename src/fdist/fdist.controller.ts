@@ -348,7 +348,7 @@ export class FDistController implements OnModuleInit {
     return this.svc.myVideoExists(payload);
   }
 
-  @Get('/video/ivp/:id')
+  @Get('/ivp/:id')
   @ApiOperation({ summary: 'IVP 메이킹 결과 통보' })
   @ApiParam({
     name: 'id',
@@ -357,6 +357,7 @@ export class FDistController implements OnModuleInit {
     type: 'number',
   })
   public ivpVideo(@Param() params: GetVideoByIdRequest): Observable<any> {
-    return this.svc.ivpVideo(params);
+    console.log(params);
+    return this.videoService.ivpVideo(params);
   }
 }
