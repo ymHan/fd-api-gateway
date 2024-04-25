@@ -1,9 +1,9 @@
-import { Body, Controller, Inject, OnModuleInit, Get, Delete } from '@nestjs/common';
+import { Param, Controller, Inject, OnModuleInit, Get, Delete } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { BACKOFFICE__SHORTS_X__SERVICE_NAME, Backoffice_ShortsX_ServiceClient } from '@proto/backoffice.pb';
 
-import { ApiParam, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('BackOffice - Shorts Plus')
 @Controller({ path: 'bo' })
@@ -28,12 +28,11 @@ export class ShortsXController implements OnModuleInit {
   @ApiOperation({ summary: '영상 삭제' })
   @ApiParam({
     name: 'id',
-    type: 'string',
+    type: 'number',
     required: true,
     description: 'video id',
   })
-  @ApiConsumes('application/x-www-form-urlencoded')
-  public deleteShortSx(@Body() payload: { id: number }): Observable<any> {
+  public deleteShortSx(@Param() payload: { id: number }): Observable<any> {
     return this.svc.deleteShortSx(payload);
   }
 }
