@@ -240,10 +240,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   @SubscribeMessage('makeReady')
   makeReady(@ConnectedSocket() socket: Socket) {
-    const nodeId = socket.data.roomId.split('::')[0];
-    const roomExists = this.roomService.findRoom(nodeId);
+    const roomId = socket.data.roomId;
 
-    roomExists.roomStatus = 'ready';
+    this.roomService.updateRoomStatus(roomId, 'ready');
 
     socket.emit('ready-message', {
       result: 'ok',
