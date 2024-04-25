@@ -25,7 +25,6 @@ export class ShortsXController implements OnModuleInit {
 
   @Delete('shortsx/:id')
   @ApiOperation({ summary: '삭제' })
-  @ApiOperation({ summary: '영상 삭제' })
   @ApiParam({
     name: 'id',
     type: 'number',
