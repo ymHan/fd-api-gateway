@@ -3,7 +3,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { BACKOFFICE__SHORTS_X__SERVICE_NAME, Backoffice_ShortsX_ServiceClient } from '@proto/backoffice.pb';
 
-import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('BackOffice - Shorts Plus')
 @Controller({ path: 'bo' })
@@ -23,18 +23,14 @@ export class ShortsXController implements OnModuleInit {
     return this.svc.listShortSx({});
   }
 
-  @Delete('shortsx')
+  @Delete('shortsx/:id')
   @ApiOperation({ summary: '삭제' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        id: {
-          type: 'number',
-          description: 'shorts+ 아이디',
-        },
-      },
-    },
+  @ApiOperation({ summary: '영상 삭제' })
+  @ApiParam({
+    name: 'id',
+    type: 'string',
+    required: true,
+    description: 'video id',
   })
   @ApiConsumes('application/x-www-form-urlencoded')
   public deleteShortSx(@Body() payload: { id: number } ): Observable<any> {

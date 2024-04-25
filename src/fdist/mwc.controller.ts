@@ -89,10 +89,10 @@ export class MwcController implements OnModuleInit {
     return this.videoSvc.togglePublished(payload);
   }
 
-  @Delete('video/:id')
+  @Delete('video/:videoId')
   @ApiOperation({ summary: '영상 삭제' })
   @ApiParam({
-    name: 'id',
+    name: 'videoId',
     type: 'string',
     required: true,
     description: 'video id',
