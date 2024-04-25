@@ -64,7 +64,6 @@ export interface TogglePublishedResponse_DATA {
 }
 
 export interface DeleteVideoRequest {
-  userId: string;
   videoId: number;
 }
 
