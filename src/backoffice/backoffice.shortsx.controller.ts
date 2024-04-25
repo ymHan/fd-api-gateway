@@ -33,7 +33,7 @@ export class ShortsXController implements OnModuleInit {
     description: 'video id',
   })
   @ApiConsumes('application/x-www-form-urlencoded')
-  public deleteShortSx(@Body() payload: { id: number } ): Observable<any> {
+  public deleteShortSx(@Body() payload: { id: number }): Observable<any> {
     return this.svc.deleteShortSx(payload);
   }
 }
