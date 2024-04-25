@@ -24,6 +24,8 @@ export interface VideoUploadRequest {
   category: string;
   recordType: string;
   contents: string[];
+  duration: string;
+  thumbnail: string[];
 }
 
 export interface VideoUploadResponse {
@@ -581,6 +583,8 @@ export interface VideoServiceClient {
   videoDone(request: VideoUploadRequest): Observable<VideoUploadResponse>;
 
   videoMake(request: VideoMakeRequest): Observable<VideoMakeResponse>;
+
+  ivpVideo(request: GetVideoByIdRequest): Observable<IvpVideoResponse>;
 }
 
 export interface VideoServiceController {
@@ -601,11 +605,20 @@ export interface VideoServiceController {
   ): Promise<VideoUploadResponse> | Observable<VideoUploadResponse> | VideoUploadResponse;
 
   videoMake(request: VideoMakeRequest): Promise<VideoMakeResponse> | Observable<VideoMakeResponse> | VideoMakeResponse;
+
+  ivpVideo(request: GetVideoByIdRequest): Promise<IvpVideoResponse> | Observable<IvpVideoResponse> | IvpVideoResponse;
 }
 
 export function VideoServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["togglePublished", "deleteVideo", "shootingVideo", "videoDone", "videoMake"];
+    const grpcMethods: string[] = [
+      "togglePublished",
+      "deleteVideo",
+      "shootingVideo",
+      "videoDone",
+      "videoMake",
+      "ivpVideo",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("VideoService", method)(constructor.prototype[method], method, descriptor);
@@ -652,8 +665,6 @@ export interface FDistServiceClient {
   myVideoList(request: MyVideoListRequest): Observable<MyVideoListResponse>;
 
   myVideoExists(request: MyVideoExistsRequest): Observable<MyVideoExistsResponse>;
-
-  ivpVideo(request: GetVideoByIdRequest): Observable<IvpVideoResponse>;
 }
 
 export interface FDistServiceController {
@@ -714,8 +725,6 @@ export interface FDistServiceController {
   myVideoExists(
     request: MyVideoExistsRequest,
   ): Promise<MyVideoExistsResponse> | Observable<MyVideoExistsResponse> | MyVideoExistsResponse;
-
-  ivpVideo(request: GetVideoByIdRequest): Promise<IvpVideoResponse> | Observable<IvpVideoResponse> | IvpVideoResponse;
 }
 
 export function FDistServiceControllerMethods() {
@@ -737,7 +746,6 @@ export function FDistServiceControllerMethods() {
       "reportVideo",
       "myVideoList",
       "myVideoExists",
-      "ivpVideo",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

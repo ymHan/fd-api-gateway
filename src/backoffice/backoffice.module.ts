@@ -10,6 +10,7 @@ import {
   MWC_SERVICE_NAME,
   VIDEO_SERVICE_NAME,
   APP_VERSION_SERVICE_NAME,
+  BACKOFFICE__SHORTS_X__SERVICE_NAME,
 } from '@proto/backoffice.pb';
 
 import { CustomerController } from './backoffice.customer.controller';
@@ -19,6 +20,7 @@ import { CategoryController } from './backoffice.category.controller';
 import { MwcController } from './backoffice.mwc.controller';
 import { VideoController } from './backoffice.video.controller';
 import { AppVersionController } from './backoffice.app.version.controller';
+import { ShortsXController } from './backoffice.shortsx.controller';
 
 import { CustomerService } from './backoffice.customer.service';
 import { VenueService } from './backoffice.venue.service';
@@ -28,6 +30,7 @@ import { MwcService } from './backoffice.mwc.service';
 import { VideoService } from './backoffice.video.service';
 import { AppVersionService } from './backoffice.app.version.service';
 import { CommonService } from '@root/common/common.service';
+import { ShortsXService } from './backoffice.shortsx.service';
 
 @Global()
 @Module({
@@ -105,6 +108,15 @@ import { CommonService } from '@root/common/common.service';
           protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
         },
       },
+      {
+        name: BACKOFFICE__SHORTS_X__SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
     ]),
   ],
   controllers: [
@@ -115,6 +127,7 @@ import { CommonService } from '@root/common/common.service';
     MwcController,
     VideoController,
     AppVersionController,
+    ShortsXController,
   ],
   providers: [
     CustomerService,
@@ -125,6 +138,7 @@ import { CommonService } from '@root/common/common.service';
     VideoService,
     AppVersionService,
     CommonService,
+    ShortsXService,
   ],
   exports: [
     CustomerService,
@@ -135,6 +149,7 @@ import { CommonService } from '@root/common/common.service';
     VideoService,
     AppVersionService,
     CommonService,
+    ShortsXService,
   ],
 })
 export class BackofficeModule {}

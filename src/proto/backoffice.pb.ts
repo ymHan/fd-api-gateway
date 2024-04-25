@@ -855,6 +855,30 @@ export interface AppVersionCreateResponse {
   message: string;
 }
 
+export interface ListShortSxResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: ListShortSxResponse_Data[];
+}
+
+export interface ListShortSxResponse_Data {
+  id: number;
+  filename: string;
+  filepath: string;
+  returnapi: string;
+}
+
+export interface DeleteShortSxRequest {
+  id: number;
+}
+
+export interface DeleteShortSxResponse {
+  result: string;
+  status: number;
+  message: string;
+}
+
 export const BACKOFFICE_PACKAGE_NAME = "backoffice";
 
 /**
@@ -1387,3 +1411,34 @@ export function AppVersionServiceControllerMethods() {
 }
 
 export const APP_VERSION_SERVICE_NAME = "AppVersionService";
+
+export interface Backoffice_ShortsX_ServiceClient {
+  listShortSx(request: Empty): Observable<ListShortSxResponse>;
+
+  deleteShortSx(request: DeleteShortSxRequest): Observable<DeleteShortSxResponse>;
+}
+
+export interface Backoffice_ShortsX_ServiceController {
+  listShortSx(request: Empty): Promise<ListShortSxResponse> | Observable<ListShortSxResponse> | ListShortSxResponse;
+
+  deleteShortSx(
+    request: DeleteShortSxRequest,
+  ): Promise<DeleteShortSxResponse> | Observable<DeleteShortSxResponse> | DeleteShortSxResponse;
+}
+
+export function Backoffice_ShortsX_ServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["listShortSx", "deleteShortSx"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("Backoffice_ShortsX_Service", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("Backoffice_ShortsX_Service", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const BACKOFFICE__SHORTS_X__SERVICE_NAME = "Backoffice_ShortsX_Service";
