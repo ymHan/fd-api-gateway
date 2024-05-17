@@ -16,19 +16,17 @@ import {
   GetLikeCheckRequest,
   GetLikeCheckResponse,
   MyVideoListRequest,
-  MyVideoListResponse,
   MyVideoExistsRequest,
   MyVideoExistsResponse,
   addTmpVideoRequest,
   VIDEO_SERVICE_NAME,
   VideoServiceClient,
-  IvpVideoResponse,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes, ApiHeader } from '@nestjs/swagger';
 import { Request } from 'express';
 
-import { RealIP } from 'nestjs-real-ip';
+// import { RealIP } from 'nestjs-real-ip';
 
 @ApiTags('FDist - Video')
 @Controller({ path: 'video' })
@@ -133,7 +131,6 @@ export class FDistController implements OnModuleInit {
     return this.videoService.videoMake(payload);
   }
 
-
   @ApiOperation({ summary: '영상 목록' })
   @ApiQuery({
     name: 'cat',
@@ -198,7 +195,7 @@ export class FDistController implements OnModuleInit {
     type: 'number',
   })
   @Get('videos/:id')
-  public getVideoById(@Req() req: Request, @Param() params: GetVideoByIdRequest, @RealIP() ip: string): Observable<any> {
+  public getVideoById(@Param() params: GetVideoByIdRequest): Observable<any> {
     return this.svc.getVideoById(params);
   }
 
@@ -216,7 +213,7 @@ export class FDistController implements OnModuleInit {
   })
   public getCategories(@Req() request: Request): Observable<GetCategorySubResponse> {
     const { lang } = request.headers;
-    return this.svc.getCategorySub({ "lang": lang as string });
+    return this.svc.getCategorySub({ lang: lang as string });
   }
 
   @Get('recordType')
@@ -357,7 +354,18 @@ export class FDistController implements OnModuleInit {
     type: 'number',
   })
   public ivpVideo(@Param() params: GetVideoByIdRequest): Observable<any> {
-    console.log(params);
     return this.videoService.ivpVideo(params);
+  }
+
+  @Post('/ivp/:id')
+  @ApiOperation({ summary: 'IVP 메이킹 결과 통보' })
+  @ApiParam({
+    name: 'id',
+    description: '영상 ID',
+    required: true,
+    type: 'number',
+  })
+  public ivpVideoP(@Param() params: GetVideoByIdRequest): Observable<any> {
+    return this.videoService.ivpVideoP(params);
   }
 }
