@@ -357,20 +357,15 @@ export class FDistController implements OnModuleInit {
     return this.videoService.ivpVideo(params);
   }
 
-  @Post('/ivp')
+  @Post('/ivp/:id')
   @ApiOperation({ summary: 'IVP 메이킹 결과 통보' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        id: {
-          type: 'number',
-          description: '영상 ID',
-        },
-      },
-    },
+  @ApiParam({
+    name: 'id',
+    description: '영상 ID',
+    required: true,
+    type: 'number',
   })
-  public ivpVideoP(@Body() params: GetVideoByIdRequest): Observable<any> {
+  public ivpVideoP(@Param() params: GetVideoByIdRequest): Observable<any> {
     return this.videoService.ivpVideoP(params);
   }
 }
