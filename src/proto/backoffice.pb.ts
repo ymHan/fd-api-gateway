@@ -1,7 +1,10 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
+import { wrappers } from "protobufjs";
 import { Observable } from "rxjs";
+import { Any } from "./google/protobuf/any.pb";
 import { Empty } from "./google/protobuf/empty.pb";
+import { Struct } from "./google/protobuf/struct.pb";
 
 export const protobufPackage = "backoffice";
 
@@ -855,7 +858,116 @@ export interface AppVersionCreateResponse {
   message: string;
 }
 
+export interface SignInRequest {
+  email: string;
+  password: string;
+}
+
+export interface SignInResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: SignInResult[];
+}
+
+export interface SignInResult {
+  id?: number | undefined;
+  email?: string | undefined;
+  name?: string | undefined;
+  nickname?: string | undefined;
+  usertype?: string | undefined;
+  state?: string | undefined;
+  token?: string | undefined;
+  error?: string | undefined;
+}
+
+export interface GetUserRequest {
+  id: number;
+  authorization?: string | undefined;
+}
+
+export interface GetUserResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: GetUserResult[];
+}
+
+export interface GetUserResult {
+  id?: number | undefined;
+  email?: string | undefined;
+  name?: string | undefined;
+  nickname?: string | undefined;
+  usertype?: string | undefined;
+  state?: string | undefined;
+  isVerifiedEmail?: boolean | undefined;
+  date?: { [key: string]: any } | undefined;
+  updatedAt?: string | undefined;
+  error?: string | undefined;
+}
+
+export interface GetUsersRequest {
+  page: number;
+  limit: number;
+  sort: string;
+  order: string;
+  authorization?: string | undefined;
+}
+
+export interface GetUsersResult {
+  id: number;
+  email: string;
+  password: string;
+  name: string;
+  nickname: string;
+  usertype: string;
+  pushreceive: boolean;
+  emailreceive: boolean;
+  state: string;
+  isVerifiedEmail: boolean;
+  createdAt: Any | undefined;
+  updatedAt: Any | undefined;
+  deletedAt: Any | undefined;
+  profileId: number;
+  channelId: number;
+}
+
+export interface GetUsersResponse {
+  result: string;
+  status: number;
+  message: string;
+  meta: Paging | undefined;
+  data: GetUsersResult[];
+}
+
+export interface UpdateRequest {
+  id: number;
+  password: string;
+  name: string;
+  nickname: string;
+  usertype: string;
+  pushreceive: boolean;
+  emailreceive: boolean;
+  state: string;
+  isVerifiedEmail: boolean;
+  authorization?: string | undefined;
+}
+
+export interface UpdateResult {
+  id: number;
+  email: string;
+}
+
+export interface UpdateResponse {
+  result: string;
+  status: number;
+  message: string;
+  data: UpdateResult[];
+}
+
 export const BACKOFFICE_PACKAGE_NAME = "backoffice";
+
+wrappers[".google.protobuf.Struct"] = { fromObject: Struct.wrap, toObject: Struct.unwrap } as any;
 
 /**
  * ******************************************************************************
@@ -1387,3 +1499,89 @@ export function AppVersionServiceControllerMethods() {
 }
 
 export const APP_VERSION_SERVICE_NAME = "AppVersionService";
+
+/**
+ * ******************************************************************************
+ * Auth 서비스
+ * *******************************************************************************
+ */
+
+export interface AuthServiceClient {
+  signIn(request: SignInRequest): Observable<SignInResponse>;
+}
+
+/**
+ * ******************************************************************************
+ * Auth 서비스
+ * *******************************************************************************
+ */
+
+export interface AuthServiceController {
+  signIn(request: SignInRequest): Promise<SignInResponse> | Observable<SignInResponse> | SignInResponse;
+}
+
+export function AuthServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["signIn"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("AuthService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const AUTH_SERVICE_NAME = "AuthService";
+
+/**
+ * ******************************************************************************
+ * Account 서비스
+ * *******************************************************************************
+ */
+
+export interface AccountServiceClient {
+  getUsers(request: GetUsersRequest): Observable<GetUsersResponse>;
+
+  getUser(request: GetUserRequest): Observable<GetUserResponse>;
+
+  updateUser(request: UpdateRequest): Observable<UpdateResponse>;
+
+  deleteUser(request: GetUserRequest): Observable<UpdateResponse>;
+}
+
+/**
+ * ******************************************************************************
+ * Account 서비스
+ * *******************************************************************************
+ */
+
+export interface AccountServiceController {
+  getUsers(request: GetUsersRequest): Promise<GetUsersResponse> | Observable<GetUsersResponse> | GetUsersResponse;
+
+  getUser(request: GetUserRequest): Promise<GetUserResponse> | Observable<GetUserResponse> | GetUserResponse;
+
+  updateUser(request: UpdateRequest): Promise<UpdateResponse> | Observable<UpdateResponse> | UpdateResponse;
+
+  deleteUser(request: GetUserRequest): Promise<UpdateResponse> | Observable<UpdateResponse> | UpdateResponse;
+}
+
+export function AccountServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["getUsers", "getUser", "updateUser", "deleteUser"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("AccountService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("AccountService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const ACCOUNT_SERVICE_NAME = "AccountService";

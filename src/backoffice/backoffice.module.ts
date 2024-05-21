@@ -10,6 +10,8 @@ import {
   MWC_SERVICE_NAME,
   VIDEO_SERVICE_NAME,
   APP_VERSION_SERVICE_NAME,
+  ACCOUNT_SERVICE_NAME,
+  AUTH_SERVICE_NAME,
 } from '@proto/backoffice.pb';
 
 import { CustomerController } from './backoffice.customer.controller';
@@ -19,6 +21,8 @@ import { CategoryController } from './backoffice.category.controller';
 import { MwcController } from './backoffice.mwc.controller';
 import { VideoController } from './backoffice.video.controller';
 import { AppVersionController } from './backoffice.app.version.controller';
+import { AccountController } from './backoffice.account.controller';
+import { AuthController } from './backoffice.auth.controller';
 
 import { CustomerService } from './backoffice.customer.service';
 import { VenueService } from './backoffice.venue.service';
@@ -28,6 +32,8 @@ import { MwcService } from './backoffice.mwc.service';
 import { VideoService } from './backoffice.video.service';
 import { AppVersionService } from './backoffice.app.version.service';
 import { CommonService } from '@root/common/common.service';
+import { AccountService } from './backoffice.account.service';
+import { AuthService } from './backoffice.auth.service';
 
 @Global()
 @Module({
@@ -105,6 +111,24 @@ import { CommonService } from '@root/common/common.service';
           protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
         },
       },
+      {
+        name: ACCOUNT_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
+      {
+        name: AUTH_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
     ]),
   ],
   controllers: [
@@ -115,6 +139,8 @@ import { CommonService } from '@root/common/common.service';
     MwcController,
     VideoController,
     AppVersionController,
+    AccountController,
+    AuthController,
   ],
   providers: [
     CustomerService,
@@ -124,6 +150,8 @@ import { CommonService } from '@root/common/common.service';
     MwcService,
     VideoService,
     AppVersionService,
+    AccountService,
+    AuthService,
     CommonService,
   ],
   exports: [
@@ -134,6 +162,8 @@ import { CommonService } from '@root/common/common.service';
     MwcService,
     VideoService,
     AppVersionService,
+    AccountService,
+    AuthService,
     CommonService,
   ],
 })
