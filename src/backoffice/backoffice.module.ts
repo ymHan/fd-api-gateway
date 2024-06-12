@@ -12,6 +12,8 @@ import {
   APP_VERSION_SERVICE_NAME,
   ACCOUNT_SERVICE_NAME,
   AUTH_SERVICE_NAME,
+  COMMON_CODE_SERVICE_NAME,
+  REPORT_SERVICE_NAME,
 } from '@proto/backoffice.pb';
 
 import { CustomerController } from './backoffice.customer.controller';
@@ -23,6 +25,8 @@ import { VideoController } from './backoffice.video.controller';
 import { AppVersionController } from './backoffice.app.version.controller';
 import { AccountController } from './backoffice.account.controller';
 import { AuthController } from './backoffice.auth.controller';
+import { CommonCodeController } from './backoffice.commoncode.controller';
+import { ReportController } from './backoffice.report.controller';
 
 import { CustomerService } from './backoffice.customer.service';
 import { VenueService } from './backoffice.venue.service';
@@ -34,6 +38,8 @@ import { AppVersionService } from './backoffice.app.version.service';
 import { CommonService } from '@root/common/common.service';
 import { AccountService } from './backoffice.account.service';
 import { AuthService } from './backoffice.auth.service';
+import { CommonCodeService } from './backoffice.commoncode.service';
+import { ReportService } from './backoffice.report.service';
 
 @Global()
 @Module({
@@ -129,6 +135,24 @@ import { AuthService } from './backoffice.auth.service';
           protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
         },
       },
+      {
+        name: COMMON_CODE_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
+      {
+        name: REPORT_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
     ]),
   ],
   controllers: [
@@ -141,6 +165,8 @@ import { AuthService } from './backoffice.auth.service';
     AppVersionController,
     AccountController,
     AuthController,
+    CommonCodeController,
+    ReportController,
   ],
   providers: [
     CustomerService,
@@ -153,6 +179,8 @@ import { AuthService } from './backoffice.auth.service';
     AccountService,
     AuthService,
     CommonService,
+    CommonCodeService,
+    ReportService,
   ],
   exports: [
     CustomerService,
@@ -165,6 +193,8 @@ import { AuthService } from './backoffice.auth.service';
     AccountService,
     AuthService,
     CommonService,
+    CommonCodeService,
+    ReportService,
   ],
 })
 export class BackofficeModule {}
