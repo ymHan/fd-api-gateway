@@ -10,6 +10,10 @@ import {
   MWC_SERVICE_NAME,
   VIDEO_SERVICE_NAME,
   APP_VERSION_SERVICE_NAME,
+  ACCOUNT_SERVICE_NAME,
+  AUTH_SERVICE_NAME,
+  COMMON_CODE_SERVICE_NAME,
+  REPORT_SERVICE_NAME,
   BACKOFFICE__SHORTS_X__SERVICE_NAME,
 } from '@proto/backoffice.pb';
 
@@ -20,6 +24,10 @@ import { CategoryController } from './backoffice.category.controller';
 import { MwcController } from './backoffice.mwc.controller';
 import { VideoController } from './backoffice.video.controller';
 import { AppVersionController } from './backoffice.app.version.controller';
+import { AccountController } from './backoffice.account.controller';
+import { AuthController } from './backoffice.auth.controller';
+import { CommonCodeController } from './backoffice.commoncode.controller';
+import { ReportController } from './backoffice.report.controller';
 import { ShortsXController } from './backoffice.shortsx.controller';
 
 import { CustomerService } from './backoffice.customer.service';
@@ -30,6 +38,10 @@ import { MwcService } from './backoffice.mwc.service';
 import { VideoService } from './backoffice.video.service';
 import { AppVersionService } from './backoffice.app.version.service';
 import { CommonService } from '@root/common/common.service';
+import { AccountService } from './backoffice.account.service';
+import { AuthService } from './backoffice.auth.service';
+import { CommonCodeService } from './backoffice.commoncode.service';
+import { ReportService } from './backoffice.report.service';
 import { ShortsXService } from './backoffice.shortsx.service';
 
 @Global()
@@ -109,6 +121,42 @@ import { ShortsXService } from './backoffice.shortsx.service';
         },
       },
       {
+        name: ACCOUNT_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
+      {
+        name: AUTH_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
+      {
+        name: COMMON_CODE_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
+      {
+        name: REPORT_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
+      {
         name: BACKOFFICE__SHORTS_X__SERVICE_NAME,
         transport: Transport.GRPC,
         options: {
@@ -127,6 +175,10 @@ import { ShortsXService } from './backoffice.shortsx.service';
     MwcController,
     VideoController,
     AppVersionController,
+    AccountController,
+    AuthController,
+    CommonCodeController,
+    ReportController,
     ShortsXController,
   ],
   providers: [
@@ -137,7 +189,11 @@ import { ShortsXService } from './backoffice.shortsx.service';
     MwcService,
     VideoService,
     AppVersionService,
+    AccountService,
+    AuthService,
     CommonService,
+    CommonCodeService,
+    ReportService,
     ShortsXService,
   ],
   exports: [
@@ -148,7 +204,11 @@ import { ShortsXService } from './backoffice.shortsx.service';
     MwcService,
     VideoService,
     AppVersionService,
+    AccountService,
+    AuthService,
     CommonService,
+    CommonCodeService,
+    ReportService,
     ShortsXService,
   ],
 })
