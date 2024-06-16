@@ -221,7 +221,7 @@ export class MemberController implements OnModuleInit {
   email 중복 체크
   * */
   @Get('/user/email/check')
-  public CheckEmailDuplication(@Query('email') email: string): Observable<CheckEmailDuplicationResponse> {
+  public CheckEmailDuplication(@Query('email') email: string): Observable<any> {
     return this.svc.checkEmailDuplication({ email });
   }
 

@@ -14,6 +14,7 @@ import {
   AUTH_SERVICE_NAME,
   COMMON_CODE_SERVICE_NAME,
   REPORT_SERVICE_NAME,
+  BACKOFFICE__SHORTS_X__SERVICE_NAME,
 } from '@proto/backoffice.pb';
 
 import { CustomerController } from './backoffice.customer.controller';
@@ -27,6 +28,7 @@ import { AccountController } from './backoffice.account.controller';
 import { AuthController } from './backoffice.auth.controller';
 import { CommonCodeController } from './backoffice.commoncode.controller';
 import { ReportController } from './backoffice.report.controller';
+import { ShortsXController } from './backoffice.shortsx.controller';
 
 import { CustomerService } from './backoffice.customer.service';
 import { VenueService } from './backoffice.venue.service';
@@ -40,6 +42,7 @@ import { AccountService } from './backoffice.account.service';
 import { AuthService } from './backoffice.auth.service';
 import { CommonCodeService } from './backoffice.commoncode.service';
 import { ReportService } from './backoffice.report.service';
+import { ShortsXService } from './backoffice.shortsx.service';
 
 @Global()
 @Module({
@@ -153,6 +156,15 @@ import { ReportService } from './backoffice.report.service';
           protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
         },
       },
+      {
+        name: BACKOFFICE__SHORTS_X__SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
     ]),
   ],
   controllers: [
@@ -167,6 +179,7 @@ import { ReportService } from './backoffice.report.service';
     AuthController,
     CommonCodeController,
     ReportController,
+    ShortsXController,
   ],
   providers: [
     CustomerService,
@@ -181,6 +194,7 @@ import { ReportService } from './backoffice.report.service';
     CommonService,
     CommonCodeService,
     ReportService,
+    ShortsXService,
   ],
   exports: [
     CustomerService,
@@ -195,6 +209,7 @@ import { ReportService } from './backoffice.report.service';
     CommonService,
     CommonCodeService,
     ReportService,
+    ShortsXService,
   ],
 })
 export class BackofficeModule {}
