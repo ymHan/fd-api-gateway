@@ -14,6 +14,7 @@ import {
   AUTH_SERVICE_NAME,
   COMMON_CODE_SERVICE_NAME,
   REPORT_SERVICE_NAME,
+  DASH_BOARD_SERVICE_NAME,
 } from '@proto/backoffice.pb';
 
 import { CustomerController } from './backoffice.customer.controller';
@@ -40,6 +41,8 @@ import { AccountService } from './backoffice.account.service';
 import { AuthService } from './backoffice.auth.service';
 import { CommonCodeService } from './backoffice.commoncode.service';
 import { ReportService } from './backoffice.report.service';
+import { DashBoardController } from './backoffice.dashboard.controller';
+import { DashBoardService } from './backoffice.dashboard.service';
 
 @Global()
 @Module({
@@ -153,6 +156,15 @@ import { ReportService } from './backoffice.report.service';
           protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
         },
       },
+      {
+        name: DASH_BOARD_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
     ]),
   ],
   controllers: [
@@ -167,6 +179,7 @@ import { ReportService } from './backoffice.report.service';
     AuthController,
     CommonCodeController,
     ReportController,
+    DashBoardController,
   ],
   providers: [
     CustomerService,
@@ -181,6 +194,7 @@ import { ReportService } from './backoffice.report.service';
     CommonService,
     CommonCodeService,
     ReportService,
+    DashBoardService,
   ],
   exports: [
     CustomerService,
@@ -195,6 +209,7 @@ import { ReportService } from './backoffice.report.service';
     CommonService,
     CommonCodeService,
     ReportService,
+    DashBoardService,
   ],
 })
 export class BackofficeModule {}
