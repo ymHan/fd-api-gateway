@@ -14,6 +14,7 @@ import {
   AUTH_SERVICE_NAME,
   COMMON_CODE_SERVICE_NAME,
   REPORT_SERVICE_NAME,
+  DASH_BOARD_SERVICE_NAME,
   BACKOFFICE__SHORTS_X__SERVICE_NAME,
 } from '@proto/backoffice.pb';
 
@@ -42,6 +43,8 @@ import { AccountService } from './backoffice.account.service';
 import { AuthService } from './backoffice.auth.service';
 import { CommonCodeService } from './backoffice.commoncode.service';
 import { ReportService } from './backoffice.report.service';
+import { DashBoardController } from './backoffice.dashboard.controller';
+import { DashBoardService } from './backoffice.dashboard.service';
 import { ShortsXService } from './backoffice.shortsx.service';
 
 @Global()
@@ -157,6 +160,15 @@ import { ShortsXService } from './backoffice.shortsx.service';
         },
       },
       {
+        name: DASH_BOARD_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
+      {
         name: BACKOFFICE__SHORTS_X__SERVICE_NAME,
         transport: Transport.GRPC,
         options: {
@@ -179,6 +191,7 @@ import { ShortsXService } from './backoffice.shortsx.service';
     AuthController,
     CommonCodeController,
     ReportController,
+    DashBoardController,
     ShortsXController,
   ],
   providers: [
@@ -194,6 +207,7 @@ import { ShortsXService } from './backoffice.shortsx.service';
     CommonService,
     CommonCodeService,
     ReportService,
+    DashBoardService,
     ShortsXService,
   ],
   exports: [
@@ -209,6 +223,7 @@ import { ShortsXService } from './backoffice.shortsx.service';
     CommonService,
     CommonCodeService,
     ReportService,
+    DashBoardService,
     ShortsXService,
   ],
 })
