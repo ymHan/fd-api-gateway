@@ -21,6 +21,7 @@ import {
   addTmpVideoRequest,
   VIDEO_SERVICE_NAME,
   VideoServiceClient,
+  GetReportTypeResponse,
 } from '@proto/fdist.pb';
 
 import { ApiTags, ApiParam, ApiOperation, ApiQuery, ApiBody, ApiConsumes, ApiHeader } from '@nestjs/swagger';
@@ -259,6 +260,12 @@ export class FDistController implements OnModuleInit {
   @ApiConsumes('application/x-www-form-urlencoded')
   public getLikeCheck(@Query() payload: GetLikeCheckRequest): Observable<GetLikeCheckResponse> {
     return this.svc.getLikeCheck(payload);
+  }
+
+  @Get('reportType')
+  @ApiOperation({ summary: '영상 신고 타입' })
+  public getReportVideoType(request: any): Observable<GetReportTypeResponse> {
+    return this.svc.getReportVideoType(request);
   }
 
   @Post('report')
