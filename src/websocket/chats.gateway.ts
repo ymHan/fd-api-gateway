@@ -13,6 +13,7 @@ import { Server, Socket } from 'socket.io';
 import { RoomService } from './room.service';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
+import { RecordType } from '@models/record-type.enum';
 
 @WebSocketGateway()
 export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -239,10 +240,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   @SubscribeMessage('makeReady')
   makeReady(@ConnectedSocket() socket: Socket) {
-    const nodeId = socket.data.roomId.split('::')[0];
-    const roomExists = this.roomService.findRoom(nodeId);
+    const roomId = socket.data.roomId;
 
-    roomExists.roomStatus = 'ready';
+    this.roomService.updateRoomStatus(roomId, 'ready');
 
     socket.emit('ready-message', {
       result: 'ok',
@@ -252,7 +252,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
   @SubscribeMessage('makeAlarm')
   async makeAlarm(@MessageBody() data, @ConnectedSocket() socket: Socket) {
-    const { record_id, command, type, duration, thumbnail, contents, result} = data;
+    const { record_id, command, type, duration, thumbnail, contents, result } = data;
     socket.emit('get-message', {
       result: 'ok',
       status: 'success',
@@ -276,13 +276,20 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
               video: result.recordType,
             },
           };
-          console.log('sendData', sendData);
-          const pushResult: any = await this.axios_instance(process.env.FDIST_PUSH_NOTIFICATION_URL, sendData);
-          console.log('pushResult', pushResult);
-          return pushResult;
+
+          if (payload.recordType.toLowerCase() !== RecordType.SHORTSX.toLowerCase()) {
+            const pushResult: any = await this.axios_instance(process.env.FDIST_PUSH_NOTIFICATION_URL, sendData);
+            console.log('pushResult', pushResult);
+            return pushResult;
+          }
         }
       }
     }
+
+    return {
+      result: 'ok',
+      status: 'fail',
+    };
   }
 
   private axios_instance(url, data) {

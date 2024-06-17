@@ -1,4 +1,4 @@
-import { Controller, Inject, OnModuleInit, Delete, Body, Post, Put } from '@nestjs/common';
+import { Controller, Inject, OnModuleInit, Delete, Body, Post, Put, Param } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import {
@@ -14,7 +14,7 @@ import {
   UpdateVideoMetaInfoResponse, ExistsMwcRequest, ExistsMwcResponse, TogglePublishedResponse, TogglePublishedRequest,
 } from '@proto/fdist.pb';
 
-import { ApiTags, ApiOperation, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiConsumes, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('FDist - MWC')
 @Controller({ path: 'mwc' })
@@ -89,26 +89,16 @@ export class MwcController implements OnModuleInit {
     return this.videoSvc.togglePublished(payload);
   }
 
-  @Delete('video')
+  @Delete('video/:videoId')
   @ApiOperation({ summary: '영상 삭제' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        userId: {
-          type: 'string',
-          description: '사용자 이메일',
-        },
-        videoId: {
-          type: 'number',
-          description: '영상 아이디',
-        },
-      },
-    },
+  @ApiParam({
+    name: 'videoId',
+    type: 'string',
+    required: true,
+    description: 'video id',
   })
-  @ApiConsumes('application/x-www-form-urlencoded')
-  public deleteVideo(@Body() payload: DeleteVideoRequest): Observable<DeleteVideoResponse> {
-    return this.videoSvc.deleteVideo(payload);
+  public deleteVideo(@Param() params: DeleteVideoRequest): Observable<DeleteVideoResponse> {
+    return this.videoSvc.deleteVideo(params);
   }
 
   @Post('video')

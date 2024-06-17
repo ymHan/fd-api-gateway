@@ -15,6 +15,7 @@ import {
   COMMON_CODE_SERVICE_NAME,
   REPORT_SERVICE_NAME,
   DASH_BOARD_SERVICE_NAME,
+  BACKOFFICE__SHORTS_X__SERVICE_NAME,
 } from '@proto/backoffice.pb';
 
 import { CustomerController } from './backoffice.customer.controller';
@@ -28,6 +29,7 @@ import { AccountController } from './backoffice.account.controller';
 import { AuthController } from './backoffice.auth.controller';
 import { CommonCodeController } from './backoffice.commoncode.controller';
 import { ReportController } from './backoffice.report.controller';
+import { ShortsXController } from './backoffice.shortsx.controller';
 
 import { CustomerService } from './backoffice.customer.service';
 import { VenueService } from './backoffice.venue.service';
@@ -43,6 +45,7 @@ import { CommonCodeService } from './backoffice.commoncode.service';
 import { ReportService } from './backoffice.report.service';
 import { DashBoardController } from './backoffice.dashboard.controller';
 import { DashBoardService } from './backoffice.dashboard.service';
+import { ShortsXService } from './backoffice.shortsx.service';
 
 @Global()
 @Module({
@@ -165,6 +168,15 @@ import { DashBoardService } from './backoffice.dashboard.service';
           protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
         },
       },
+      {
+        name: BACKOFFICE__SHORTS_X__SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50054',
+          package: BACKOFFICE_PACKAGE_NAME,
+          protoPath: 'node_modules/fd-proto/proto/backoffice.proto',
+        },
+      },
     ]),
   ],
   controllers: [
@@ -180,6 +192,7 @@ import { DashBoardService } from './backoffice.dashboard.service';
     CommonCodeController,
     ReportController,
     DashBoardController,
+    ShortsXController,
   ],
   providers: [
     CustomerService,
@@ -195,6 +208,7 @@ import { DashBoardService } from './backoffice.dashboard.service';
     CommonCodeService,
     ReportService,
     DashBoardService,
+    ShortsXService,
   ],
   exports: [
     CustomerService,
@@ -210,6 +224,7 @@ import { DashBoardService } from './backoffice.dashboard.service';
     CommonCodeService,
     ReportService,
     DashBoardService,
+    ShortsXService,
   ],
 })
 export class BackofficeModule {}
